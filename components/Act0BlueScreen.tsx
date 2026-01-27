@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Monitor, Terminal } from 'lucide-react';
 
 interface Act0BlueScreenProps {
@@ -9,8 +9,24 @@ interface Act0BlueScreenProps {
 
 const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onComplete }) => {
   const [percentage, setPercentage] = useState(0);
+  const errorAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  /**
+   * LINK DIRETO OPTIMIZADO (Dropbox):
+   * Convertemos 'www.dropbox.com' para 'dl.dropboxusercontent.com'
+   */
+  const ERROR_SFX_URL = "https://dl.dropboxusercontent.com/scl/fi/0h55rla37zwcxpuy57jv3/error-sound.mp3?rlkey=n1lmk8iwk3pef8k8blc4ognlg";
 
   useEffect(() => {
+    // Inicializa e toca o som de erro
+    const audio = new Audio(ERROR_SFX_URL);
+    audio.volume = 0.6;
+    errorAudioRef.current = audio;
+    
+    audio.play().catch(e => {
+      console.warn("Autoplay do som de erro bloqueado ou falhou. Requer interação prévia.");
+    });
+
     const totalDuration = mode === 'intro' ? 5500 : 9000;
 
     let interval: any;
@@ -31,6 +47,10 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
     return () => {
       clearTimeout(completeTimer);
       if (interval) clearInterval(interval);
+      if (errorAudioRef.current) {
+        errorAudioRef.current.pause();
+        errorAudioRef.current = null;
+      }
     };
   }, [onComplete, mode]);
 

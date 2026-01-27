@@ -24,26 +24,39 @@ const App: React.FC = () => {
     answers: {}
   });
 
-  // Referência para a trilha sonora principal (persistente)
+  // Motor de áudio persistente
   const mainAudioRef = useRef<HTMLAudioElement | null>(null);
 
+  /**
+   * LINK DIRETO OPTIMIZADO (Dropbox):
+   * Convertemos 'www.dropbox.com' para 'dl.dropboxusercontent.com' 
+   * Isso evita a página de visualização do Dropbox e entrega o arquivo bruto.
+   */
+  const AUDIO_SOURCE = "https://dl.dropboxusercontent.com/scl/fi/a712ue0yjxqwio6v9b9t5/trilha-exp-360-refugio-TESTE-5-PREMASTERED.mp3?rlkey=hld15nfh2qyjd8virxn14dzmd";
+
   useEffect(() => {
-    // Instancia o áudio no carregamento da página (Pre-loading)
-    // Usando o nome exato fornecido por você
-    const audio = new Audio('Som respiração - Rubens Borges (youtube).mp3'); 
-    audio.loop = false; // Não desejamos loop
-    audio.volume = 0.8;
+    const audio = new Audio();
+    audio.src = AUDIO_SOURCE;
+    audio.loop = false;
+    audio.volume = 0.7;
+    audio.preload = "auto";
+    
+    // Tratamento de erros de carregamento
+    audio.onerror = () => {
+      console.warn("Aviso: Falha ao carregar áudio do Dropbox. Verifique se o link ainda é válido.");
+    };
+
     mainAudioRef.current = audio;
 
     return () => {
       if (mainAudioRef.current) {
         mainAudioRef.current.pause();
+        mainAudioRef.current.src = "";
         mainAudioRef.current = null;
       }
     };
   }, []);
 
-  // Controle de Mute
   const toggleMute = () => {
     if (mainAudioRef.current) {
       const newMutedState = !isMuted;
@@ -65,10 +78,10 @@ const App: React.FC = () => {
   };
 
   const startExperience = () => {
-    // Inicia a trilha sonora principal no gesto do usuário
     if (mainAudioRef.current) {
+      // Forçamos o play após a interação do usuário (obrigatório em navegadores modernos)
       mainAudioRef.current.play().catch(e => {
-        console.warn("A reprodução do áudio foi bloqueada ou o arquivo não foi encontrado:", e);
+        console.error("Erro ao reproduzir áudio:", e);
       });
     }
     navigateTo(FunnelStep.BIOMETRIC_ANALYSIS);
@@ -121,18 +134,16 @@ const App: React.FC = () => {
   const DevControls = () => (
     <button 
       onClick={() => setStep(FunnelStep.INDEX)}
-      className="fixed bottom-4 right-4 z-[9999] bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-full border border-white/20 transition-all shadow-2xl"
-      title="Voltar ao Mission Control"
+      className="fixed bottom-4 right-4 z-[9999] bg-white/5 hover:bg-white/10 backdrop-blur-md text-white/20 hover:text-white p-3 rounded-full border border-white/5 transition-all shadow-lg"
     >
       <LayoutGrid className="w-5 h-5" />
     </button>
   );
 
-  // Widget de Áudio Global
   const AudioControl = () => (
     <button 
       onClick={toggleMute}
-      className="fixed top-4 right-4 z-[100] p-3 rounded-full bg-black/20 backdrop-blur-md border border-white/10 text-[#8EFF8E] hover:bg-black/40 transition-all active:scale-90"
+      className={`fixed top-4 right-4 z-[100] p-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[#8EFF8E] transition-all hover:bg-black/60 shadow-xl ${step === FunnelStep.START_SCREEN ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
     >
       {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5 animate-pulse" />}
     </button>
@@ -145,47 +156,49 @@ const App: React.FC = () => {
   // TELA INICIAL (Sexto Sentido)
   if (step === FunnelStep.START_SCREEN) {
     return (
-      <div className="min-h-screen w-full bg-black flex flex-col items-center justify-center p-6 font-mono overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900 via-black to-black opacity-40"></div>
-        <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-
-        <div className="relative z-10 text-center space-y-12 animate-in fade-in zoom-in duration-1000 max-w-lg w-full">
-          <div className="w-32 h-32 bg-zinc-900 border border-[#8EFF8E]/20 rounded-full flex items-center justify-center mx-auto shadow-[0_0_60px_rgba(142,255,142,0.15)] relative">
-            <div className="absolute inset-0 border border-[#8EFF8E]/10 rounded-full animate-ping"></div>
-            <Shield className="w-16 h-16 text-[#8EFF8E]/80 animate-pulse relative z-10" />
+      <div className="min-h-screen w-full bg-[#050505] flex flex-col items-center justify-center p-6 font-mono overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#1a1a1a_0%,_#050505_100%)]"></div>
+        
+        <div className="relative z-10 text-center space-y-16 animate-in fade-in zoom-in duration-1000 max-w-lg w-full">
+          <div className="relative w-48 h-48 mx-auto flex items-center justify-center">
+             <div className="absolute inset-0 rounded-full border border-white/[0.02]"></div>
+             <div className="absolute inset-4 rounded-full border border-white/[0.04]"></div>
+             <div className="absolute inset-8 rounded-full bg-[#121212] border border-[#8EFF8E]/10 flex items-center justify-center shadow-[inset_0_0_30px_rgba(0,0,0,0.8)]">
+                <Shield className="w-20 h-20 text-[#8EFF8E]/40 stroke-[1px]" />
+             </div>
           </div>
           
-          <div className="space-y-4">
-            <h1 className="text-white text-2xl md:text-3xl font-black tracking-[0.25em] uppercase italic leading-tight">
-              ATIVE O SEU SEXTO SENTIDO:
+          <div className="space-y-6">
+            <h1 className="text-white text-3xl md:text-5xl font-black tracking-[0.2em] uppercase italic leading-[1.1] drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
+              ATIVE O SEU SEXTO <br/> SENTIDO:
             </h1>
-            <p className="text-[#8EFF8E] text-xs md:text-sm uppercase tracking-[0.4em] font-bold animate-pulse">
+            <p className="text-[#8EFF8E] text-[10px] md:text-xs uppercase tracking-[0.6em] font-black animate-pulse opacity-90 drop-shadow-[0_0_8px_rgba(142,255,142,0.3)]">
               Ative o som e aumente o volume!
             </p>
           </div>
           
-          <div className="flex flex-col items-center space-y-10">
+          <div className="flex flex-col items-center space-y-14">
             <button 
               onClick={startExperience}
-              className="group relative px-14 py-6 bg-[#8EFF8E] text-black font-black text-base md:text-lg uppercase italic tracking-[0.15em] rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(142,255,142,0.5)] flex items-center gap-4"
+              className="group relative px-12 py-7 bg-[#8EFF8E] text-black font-black text-lg md:text-xl uppercase italic tracking-[0.05em] rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(142,255,142,0.4)] flex items-center gap-4 overflow-hidden"
             >
-              <Power className="w-6 h-6" />
+              <div className="absolute inset-0 bg-white/30 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 skew-x-[-30deg]"></div>
+              <Power className="w-7 h-7 stroke-[3px]" />
               INICIAR DIAGNÓSTICO
             </button>
             
-            <p className="text-zinc-600 text-[10px] md:text-[11px] max-w-[320px] mx-auto leading-relaxed font-sans font-medium opacity-80">
+            <p className="text-zinc-700 text-[10px] md:text-[11px] max-w-[340px] mx-auto leading-relaxed font-sans font-bold uppercase tracking-tighter opacity-70 text-center">
               "Fique tranquilo, pois é só uma simulação/brincadeira! Não se preocupe, não coletaremos seus dados (biométricos)."
             </p>
           </div>
         </div>
         
-        <div className="absolute bottom-10 left-0 w-full flex justify-center opacity-5 pointer-events-none">
-          <div className="flex space-x-12 text-[8px] uppercase tracking-[1em] text-white">
-            <span>BIT_OS</span>
-            <span>SYSTEM_READY</span>
-            <span>V.2026</span>
-          </div>
+        <div className="absolute bottom-8 left-0 w-full flex justify-between px-10 opacity-10 pointer-events-none">
+          <span className="text-[8px] uppercase tracking-[0.8em] text-white font-bold">BIT_OS</span>
+          <span className="text-[8px] uppercase tracking-[0.8em] text-white font-bold">SYSTEM_READY</span>
+          <span className="text-[8px] uppercase tracking-[0.8em] text-white font-bold">V.2026</span>
         </div>
+        
         <DevControls />
       </div>
     );
