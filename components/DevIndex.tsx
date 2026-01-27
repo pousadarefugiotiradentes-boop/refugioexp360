@@ -13,80 +13,197 @@ import {
   Trash2, 
   ShoppingBag,
   Play,
-  Volume2
+  Volume2,
+  Headphones,
+  Settings,
+  ShieldCheck
 } from 'lucide-react';
 
 interface DevIndexProps {
-  onSelectStep: (step: FunnelStep) => void;
+  onSelectStep: (step: FunnelStep, mode?: string) => void;
   onStartNormalFlow: () => void;
 }
 
 const DevIndex: React.FC<DevIndexProps> = ({ onSelectStep, onStartNormalFlow }) => {
   const steps = [
-    { id: FunnelStep.START_SCREEN, name: 'Act 0: Sexto Sentido', icon: Volume2, color: 'text-amber-400' },
-    { id: FunnelStep.BIOMETRIC_ANALYSIS, name: 'Act 0: Biometria', icon: Fingerprint, color: 'text-red-500' },
-    { id: FunnelStep.ERROR_SCREEN, name: 'Act 0: Tela de Erro', icon: AlertCircle, color: 'text-orange-500' },
-    { id: FunnelStep.BLUE_SCREEN, name: 'Act 0: Blue Screen', icon: Monitor, color: 'text-blue-500' },
-    { id: FunnelStep.BREATHING, name: 'Act 0: Respiração', icon: Wind, color: 'text-[#8EFF8E]' },
-    { id: FunnelStep.WHATSAPP, name: 'Act 2: WhatsApp', icon: MessageSquare, color: 'text-[#00a884]' },
-    { id: FunnelStep.PHONE_CALL, name: 'Act 3: Chamada', icon: Phone, color: 'text-green-500' },
-    { id: FunnelStep.SECRET_LOGIN, name: 'Act 5: Login Secreto', icon: Lock, color: 'text-amber-500' },
-    { id: FunnelStep.OFFER, name: 'Act 4: Oferta Final', icon: ShoppingBag, color: 'text-amber-600' },
-    { id: FunnelStep.AUTODESTRUCT, name: 'Act 6: Auto-destruição', icon: Trash2, color: 'text-red-700' },
+    { 
+      id: FunnelStep.START_SCREEN, 
+      name: 'Act 0: Sexto Sentido', 
+      desc: 'Tela de introdução e ativação sonora',
+      icon: Volume2, 
+      color: 'text-amber-400' 
+    },
+    { 
+      id: FunnelStep.BIOMETRIC_ANALYSIS, 
+      name: 'Act 0: Biometria', 
+      desc: 'Simulação de leitura de BPM e Stress',
+      icon: Fingerprint, 
+      color: 'text-red-500' 
+    },
+    { 
+      id: FunnelStep.ERROR_SCREEN, 
+      name: 'Act 0: Tela de Erro', 
+      desc: 'Critical Overload e Termos de Uso',
+      icon: AlertCircle, 
+      color: 'text-orange-500' 
+    },
+    { 
+      id: FunnelStep.BLUE_SCREEN, 
+      name: 'Act 0: Blue Screen', 
+      desc: 'Simulação de falha de sistema (Intro/Final)',
+      icon: Monitor, 
+      color: 'text-blue-500' 
+    },
+    { 
+      id: FunnelStep.BREATHING, 
+      name: 'Act 0: Respiração', 
+      desc: 'Protocolo de reinicialização pulmonar',
+      icon: Wind, 
+      color: 'text-[#8EFF8E]' 
+    },
+    { 
+      id: FunnelStep.WHATSAPP, 
+      name: 'Act 2: WhatsApp (Normal)', 
+      desc: 'Fluxo inicial de mensagens do Joaquim',
+      icon: MessageSquare, 
+      color: 'text-[#00a884]' 
+    },
+    { 
+      id: FunnelStep.WHATSAPP, 
+      name: 'Act 2.1: WhatsApp (Áudio)', 
+      mode: 'after-decline',
+      desc: 'Fluxo de áudio após recusar chamada',
+      icon: Headphones, 
+      color: 'text-emerald-400' 
+    },
+    { 
+      id: FunnelStep.PHONE_CALL, 
+      name: 'Act 3: Chamada', 
+      desc: 'Interface de ligação simulada (Voz Joaquim)',
+      icon: Phone, 
+      color: 'text-green-500' 
+    },
+    { 
+      id: FunnelStep.SECRET_LOGIN, 
+      name: 'Act 5: Login Secreto', 
+      desc: 'Acesso ao Foocking.com (Deep Web)',
+      icon: Lock, 
+      color: 'text-amber-500' 
+    },
+    { 
+      id: FunnelStep.OFFER, 
+      name: 'Act 4: Oferta Final', 
+      desc: 'Landing Page imersiva e Tour Virtual',
+      icon: ShoppingBag, 
+      color: 'text-amber-600' 
+    },
+    { 
+      id: FunnelStep.AUTODESTRUCT, 
+      name: 'Act 6: Auto-destruição', 
+      desc: 'Bloqueio de contato e wipe de dados',
+      icon: Trash2, 
+      color: 'text-red-700' 
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-zinc-400 p-8 font-mono">
-      <div className="max-w-4xl mx-auto space-y-12">
-        <header className="border-b border-zinc-800 pb-8 flex justify-between items-end">
+    <div className="min-h-screen bg-[#050505] text-zinc-400 p-6 md:p-12 font-mono relative overflow-x-hidden">
+      {/* Background Decorativo Tech */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/grid-me.png')]"></div>
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500/0 via-amber-500/50 to-amber-500/0"></div>
+
+      <div className="max-w-6xl mx-auto space-y-12 relative z-10">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-10">
           <div>
-            <div className="flex items-center gap-2 text-amber-500 mb-2">
-              <LayoutGrid className="w-5 h-5" />
-              <span className="text-xs font-bold tracking-[0.3em] uppercase">Dev Environment</span>
+            <div className="flex items-center gap-3 text-amber-500 mb-3">
+              <div className="p-1.5 bg-amber-500/10 rounded-md">
+                <Settings className="w-4 h-4 animate-spin-slow" />
+              </div>
+              <span className="text-[10px] font-black tracking-[0.4em] uppercase">Ambiente de Desenvolvimento Ativo</span>
             </div>
-            <h1 className="text-3xl font-black text-white italic tracking-tighter uppercase">
-              Mission Control <span className="text-amber-500">v2.0</span>
+            <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter uppercase leading-none">
+              MISSION <span className="text-amber-500">CONTROL</span> <span className="text-zinc-700">V2.1</span>
             </h1>
+            <p className="text-zinc-600 text-[10px] mt-4 uppercase tracking-widest font-bold">Gerenciamento de Atos e Fluxos Narrativos</p>
           </div>
-          <button 
-            onClick={onStartNormalFlow}
-            className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-bold text-xs hover:bg-amber-500 transition-colors group"
-          >
-            <Play className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" />
-            FLUXO NORMAL (START)
-          </button>
+          
+          <div className="flex flex-wrap gap-4">
+            <button 
+              onClick={onStartNormalFlow}
+              className="flex items-center gap-4 bg-[#8EFF8E] text-black px-8 py-4 rounded-2xl font-black text-xs hover:scale-105 transition-all shadow-[0_10px_30px_rgba(142,255,142,0.2)] group"
+            >
+              <Play className="w-4 h-4 fill-current group-hover:translate-x-1 transition-transform" />
+              INICIAR FLUXO NORMAL (PRODUCTION)
+            </button>
+          </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {steps.map((step) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {steps.map((step, idx) => {
             const Icon = step.icon;
             return (
               <button
-                key={step.id}
-                onClick={() => onSelectStep(step.id)}
-                className="flex items-center gap-4 p-6 bg-zinc-900/50 border border-zinc-800 rounded-2xl hover:border-amber-500/50 hover:bg-zinc-800 transition-all text-left group"
+                key={`${step.id}-${idx}`}
+                onClick={() => onSelectStep(step.id, step.mode)}
+                className="flex flex-col gap-5 p-6 bg-zinc-900/30 border border-white/5 rounded-3xl hover:border-amber-500/30 hover:bg-zinc-800/50 transition-all text-left group relative overflow-hidden"
               >
-                <div className={`p-3 rounded-xl bg-black border border-zinc-800 group-hover:border-amber-500/30 ${step.color}`}>
+                <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                   <Icon className="w-16 h-16" />
+                </div>
+
+                <div className={`w-12 h-12 rounded-2xl bg-black border border-white/5 flex items-center justify-center group-hover:scale-110 transition-transform ${step.color}`}>
                   <Icon className="w-6 h-6" />
                 </div>
+                
                 <div>
-                  <h3 className="text-white font-bold text-sm tracking-tight">{step.name}</h3>
-                  <p className="text-[10px] text-zinc-600 uppercase mt-1 tracking-widest">{step.id}</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-white font-black text-sm uppercase tracking-tight group-hover:text-amber-500 transition-colors">
+                      {step.name}
+                    </h3>
+                    {step.mode && (
+                      <span className="text-[8px] bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded font-bold border border-emerald-500/20">
+                        {step.mode}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-zinc-600 font-bold leading-relaxed mb-3">
+                    {step.desc}
+                  </p>
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                    <span className="text-[9px] text-zinc-700 font-mono tracking-widest">{step.id}</span>
+                    <ShieldCheck className="w-3 h-3 text-zinc-800" />
+                  </div>
                 </div>
               </button>
             );
           })}
         </div>
 
-        <footer className="pt-12 border-t border-zinc-800 flex flex-col items-center gap-4 opacity-50">
-          <p className="text-[10px] uppercase tracking-[0.5em]">Tiradentes Attraction Code • 2026</p>
-          <div className="flex gap-8 text-[8px] tracking-[0.2em] font-bold">
-            <span>BIT_OS v2.4</span>
-            <span>SYSTEM_STABLE</span>
-            <span>DEBUG_MODE_ACTIVE</span>
+        <footer className="pt-16 pb-8 border-t border-white/5 flex flex-col items-center gap-6 opacity-30">
+          <div className="flex items-center gap-4">
+             <div className="w-10 h-10 bg-white rounded-full p-2 grayscale">
+               <img src="https://i.postimg.cc/q7hsz5Yd/logo-refugio-quadrada-sem-fundo.png" alt="Logo" className="w-full h-full object-contain" />
+             </div>
+          </div>
+          <p className="text-[10px] uppercase tracking-[0.6em] font-black text-center">Tiradentes Attraction Code • Refúgio Experiência</p>
+          <div className="flex flex-wrap justify-center gap-8 text-[8px] tracking-[0.3em] font-black">
+            <span>BIT_OS v2.4.2</span>
+            <span>KERNEL: STABLE</span>
+            <span>DEBUG: ENABLED</span>
+            <span>© 2026 LOVART IND.</span>
           </div>
         </footer>
       </div>
+
+      <style>{`
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 8s linear infinite;
+        }
+      `}</style>
     </div>
   );
 };

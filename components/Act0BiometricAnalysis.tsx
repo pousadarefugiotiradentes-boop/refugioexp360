@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 
 interface Act0BiometricAnalysisProps {
   onComplete: () => void;
@@ -36,6 +37,9 @@ const Act0BiometricAnalysis: React.FC<Act0BiometricAnalysisProps> = ({ onComplet
   const [displayedProgress, setDisplayedProgress] = useState(0);
   const [currentMessage, setCurrentMessage] = useState(0);
   const [isFinalizing, setIsFinalizing] = useState(false);
+  const errorAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  const ERROR_SFX_URL = "https://dl.dropboxusercontent.com/scl/fi/0h55rla37zwcxpuy57jv3/error-sound.mp3?rlkey=n1lmk8iwk3pef8k8blc4ognlg";
 
   const messages = [
     "► Estabelecendo conexão segura...",
@@ -49,13 +53,17 @@ const Act0BiometricAnalysis: React.FC<Act0BiometricAnalysisProps> = ({ onComplet
   ];
 
   useEffect(() => {
+    // Inicializa o áudio de erro
+    const audio = new Audio(ERROR_SFX_URL);
+    audio.volume = 0.7;
+    errorAudioRef.current = audio;
+
     let currentBase = 0;
     const interval = setInterval(() => {
       const increment = 0.3 + (Math.random() * 0.2);
       currentBase = Math.min(100, currentBase + increment);
       setBaseProgress(currentBase);
 
-      // Oscilação visual realista para simular leitura em tempo real
       const oscillation = (Math.sin(Date.now() / 150) * 1.5) + (Math.random() * 1.2);
       const nextDisplayed = Math.min(100, Math.max(0, currentBase + oscillation));
       setDisplayedProgress(nextDisplayed);
@@ -64,13 +72,25 @@ const Act0BiometricAnalysis: React.FC<Act0BiometricAnalysisProps> = ({ onComplet
         clearInterval(interval);
         setDisplayedProgress(100);
         setIsFinalizing(true);
+        
+        // Toca o som de erro no impacto final
+        if (errorAudioRef.current) {
+          errorAudioRef.current.play().catch(() => {});
+        }
+
         setTimeout(() => {
           onComplete();
-        }, 1800);
+        }, 1200);
       }
     }, 60);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (errorAudioRef.current) {
+        errorAudioRef.current.pause();
+        errorAudioRef.current = null;
+      }
+    };
   }, [onComplete]);
 
   useEffect(() => {

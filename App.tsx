@@ -104,6 +104,7 @@ const App: React.FC = () => {
   }, [navigateTo]);
 
   const handleBiometricComplete = useCallback(() => {
+    // CORREÇÃO: Após a Biometria, o sistema deve ir para a Tela de Erro (Act 0: Error Screen)
     navigateTo(FunnelStep.ERROR_SCREEN);
   }, [navigateTo]);
 
@@ -151,7 +152,19 @@ const App: React.FC = () => {
   }, [navigateTo]);
 
   if (step === FunnelStep.INDEX) {
-    return <DevIndex onSelectStep={(s) => setStep(s)} onStartNormalFlow={() => setStep(FunnelStep.START_SCREEN)} />;
+    return (
+      <DevIndex 
+        onSelectStep={(s, mode) => {
+          if (mode) setWhatsappMode(mode as any);
+          else setWhatsappMode('normal');
+          setStep(s);
+        }} 
+        onStartNormalFlow={() => {
+          setWhatsappMode('normal');
+          setStep(FunnelStep.START_SCREEN);
+        }} 
+      />
+    );
   }
 
   if (step === FunnelStep.START_SCREEN) {
@@ -194,10 +207,10 @@ const App: React.FC = () => {
       {step === FunnelStep.ERROR_SCREEN && <Act0Error onComplete={handleErrorComplete} />}
       {step === FunnelStep.BLUE_SCREEN && <Act0BlueScreen mode={blueScreenMode} onComplete={handleBlueScreenComplete} />}
       {step === FunnelStep.BREATHING && <Act0Breathing onComplete={handleBreathingComplete} />}
-      {step === FunnelStep.WHATSAPP && <Act2WhatsApp userProfile={userProfile} onDecision={handleWhatsAppDecision} mode={whatsappMode} onFinalComplete={handleFinalLoginTransition} />}
+      {step === FunnelStep.WHATSAPP && <Act2WhatsApp userProfile={userProfile} onDecision={handleWhatsAppDecision} mode={whatsappMode} onFinalComplete={handleFinalLoginTransition} onVolumeChange={(vol) => fadeVolume(vol, 1200)} />}
       {step === FunnelStep.PHONE_CALL && <Act3PhoneCall userProfile={userProfile} onComplete={handleCallComplete} onDecline={handleCallDecline} onVolumeChange={(vol) => fadeVolume(vol, 1200)} />}
       {step === FunnelStep.SECRET_LOGIN && <Act5SecretLogin onComplete={handleSecretLoginComplete} />}
-      {step === FunnelStep.AUTODESTRUCT && <Act6Autodestruct />}
+      {step === FunnelStep.AUTODESTRUCT && <Act6Autodestruct onComplete={() => navigateTo(FunnelStep.OFFER)} />}
       {step === FunnelStep.OFFER && <Act4Offer userProfile={userProfile} />}
 
       <button onClick={() => setStep(FunnelStep.INDEX)} className="fixed bottom-4 right-4 z-[9999] bg-white/5 text-white/20 p-3 rounded-full border border-white/5">

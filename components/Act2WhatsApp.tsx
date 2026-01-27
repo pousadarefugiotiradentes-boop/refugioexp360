@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { UserProfile, Message } from '../types';
 import { 
   Phone, MoreVertical, Send, CheckCheck, User, ArrowLeft, Video, 
-  Smile, Paperclip, Camera, Mic, ShieldAlert, Play, Pause, XCircle, Clock
+  Smile, Paperclip, Camera, Mic, ShieldAlert, Play, Pause, XCircle, Clock, ExternalLink
 } from 'lucide-react';
 
 interface Act2WhatsAppProps {
@@ -11,35 +11,62 @@ interface Act2WhatsAppProps {
   onDecision: (decision: 'call' | 'login' | 'exit') => void;
   mode?: 'normal' | 'after-decline';
   onFinalComplete?: () => void;
+  onVolumeChange?: (volume: number) => void;
 }
 
-const AudioBubble = ({ onComplete, onPlayStarted }: { onComplete: () => void; onPlayStarted: () => void }) => {
+const AudioBubble = ({ 
+  onComplete, 
+  onPlayStarted, 
+  onVolumeChange 
+}: { 
+  onComplete: () => void; 
+  onPlayStarted: () => void;
+  onVolumeChange?: (volume: number) => void;
+}) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const hasStartedRef = useRef(false);
   const JOAQUIM_VOICE_URL = "https://dl.dropboxusercontent.com/scl/fi/syvbwm8r21kdctghvlkmv/joaquim-chamando.mp3?rlkey=34rdytesptpapd79v128gmtcw";
 
+  const onCompleteRef = useRef(onComplete);
+  const onPlayStartedRef = useRef(onPlayStarted);
+  const onVolumeChangeRef = useRef(onVolumeChange);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+    onPlayStartedRef.current = onPlayStarted;
+    onVolumeChangeRef.current = onVolumeChange;
+  }, [onComplete, onPlayStarted, onVolumeChange]);
+
   useEffect(() => {
     const audio = new Audio(JOAQUIM_VOICE_URL);
     audio.onended = () => {
       setIsPlaying(false);
-      onComplete();
+      if (onVolumeChangeRef.current) onVolumeChangeRef.current(0.7);
+      onCompleteRef.current();
     };
     audio.ontimeupdate = () => {
       setProgress((audio.currentTime / audio.duration) * 100);
     };
     audioRef.current = audio;
-    return () => audio.pause();
-  }, [onComplete]);
+    
+    return () => {
+      audio.pause();
+      audio.src = "";
+    };
+  }, []);
 
   const togglePlay = () => {
     if (isPlaying) {
       audioRef.current?.pause();
+      if (onVolumeChangeRef.current) onVolumeChangeRef.current(0.7);
     } else {
       audioRef.current?.play();
+      if (onVolumeChangeRef.current) onVolumeChangeRef.current(0.07);
+      
       if (!hasStartedRef.current) {
-        onPlayStarted();
+        onPlayStartedRef.current();
         hasStartedRef.current = true;
       }
     }
@@ -47,12 +74,12 @@ const AudioBubble = ({ onComplete, onPlayStarted }: { onComplete: () => void; on
   };
 
   return (
-    <div className="bg-white rounded-r-lg rounded-bl-lg p-3 shadow-sm flex items-center space-x-3 w-fit max-w-[85%] animate-in fade-in slide-in-from-left-2 text-[#111b21]">
+    <div className="bg-white rounded-r-lg rounded-bl-lg p-3 shadow-sm flex items-center space-x-3 w-fit max-w-[85%] animate-in fade-in slide-in-from-left-2 text-[#111b21] mb-2">
       <div className="relative shrink-0">
         <img src="https://i.postimg.cc/1XhTqCyf/joaquim-perfil-2.png" className="w-10 h-10 rounded-full object-cover" alt="Joaquim" />
         <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5"><Mic className="w-3 h-3 text-[#00a884]" /></div>
       </div>
-      <button onClick={togglePlay} className="text-[#54656f] shrink-0">
+      <button onClick={togglePlay} className="text-[#54656f] shrink-0 outline-none">
         {isPlaying ? <Pause className="fill-current w-6 h-6" /> : <Play className="fill-current w-6 h-6" />}
       </button>
       <div className="flex-1 space-y-1 min-w-[140px]">
@@ -70,21 +97,22 @@ const AudioBubble = ({ onComplete, onPlayStarted }: { onComplete: () => void; on
   );
 };
 
-const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ userProfile, onDecision, mode = 'normal', onFinalComplete }) => {
+const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ userProfile, onDecision, mode = 'normal', onFinalComplete, onVolumeChange }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
   const [step, setStep] = useState(0);
   const [showOptions, setShowOptions] = useState(false);
+  const [showFinalCta, setShowFinalCta] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [audioStep, setAudioStep] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
+  const sequenceStartedRef = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const addMessage = (text: string, sender: 'mentor' | 'user') => {
+  const addMessage = (text: string, sender: 'mentor' | 'user', isAudio = false) => {
     setMessages(prev => [...prev, {
       id: Date.now() + Math.random(),
-      text, sender, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      text, sender, isAudio, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }]);
   };
 
@@ -116,16 +144,30 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ userProfile, onDecision, mo
         setTimeout(() => {
           setIsTyping(false);
           addMessage(`Não pode atender agora, né? Entendo... Então, vou te mandar um audio, quando puder escuta!`, 'mentor');
-          setTimeout(() => setAudioStep(true), 1000);
+          setTimeout(() => {
+            addMessage('', 'mentor', true);
+            // Inicia a sequência de texto automaticamente após 5 segundos, mesmo que não dê play
+            setTimeout(() => {
+              if (!sequenceStartedRef.current) {
+                startAudioSequence();
+              }
+            }, 5000);
+          }, 1000);
         }, 2000);
       }
     };
     runScript();
   }, [step]);
 
+  // Bug Fix: Garantir autoscroll quando novas mensagens chegam, Joaquim está digitando ou o botão final aparece
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping, audioStep]);
+    const scroll = () => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+    // Pequeno delay para garantir que o DOM renderizou
+    const timeout = setTimeout(scroll, 100);
+    return () => clearTimeout(timeout);
+  }, [messages, isTyping, showFinalCta]);
 
   const handleUserResponse = (text: string) => {
     if (!text.trim()) return;
@@ -142,20 +184,27 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ userProfile, onDecision, mo
   };
 
   const startAudioSequence = () => {
+    if (sequenceStartedRef.current) return;
+    sequenceStartedRef.current = true;
+
     const sequence = [
       { text: "Anota ai o login e a senha pra você acessar o sistema:", delay: 2000 },
       { text: "o login é SUPERADMIN", delay: 5000 },
       { text: "senha: meurefugio", delay: 8000 },
-      { text: "Não compartilha com ninguém, eim! Fica só entre nós!", delay: 12000 },
-      { text: "Acessa logo, pode sair do ar a qualquer momento!", delay: 16000 }
+      { text: "Não compartilha com ninguém, eim! Fica só entre nós!", delay: 11000 },
+      { text: "Acessa logo, pode sair do ar a qualquer momento!", delay: 14000 }
     ];
 
-    sequence.forEach((item) => {
+    sequence.forEach((item, index) => {
       setTimeout(() => {
         setIsTyping(true);
         setTimeout(() => {
           setIsTyping(false);
           addMessage(item.text, 'mentor');
+          // No último item, mostra o botão de ação final
+          if (index === sequence.length - 1) {
+            setTimeout(() => setShowFinalCta(true), 1000);
+          }
         }, 1200);
       }, item.delay);
     });
@@ -172,6 +221,8 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ userProfile, onDecision, mo
         .pulse-2 { animation: staggeredPulse 2s infinite ease-in-out 0.5s; }
         .pulse-3 { animation: staggeredPulse 2s infinite ease-in-out 1s; }
         .pulse-4 { animation: staggeredPulse 2s infinite ease-in-out 1.5s; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
       <div className="bg-[#008069] text-white p-3 flex items-center justify-between shadow-md z-50 h-16 shrink-0">
@@ -193,19 +244,44 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ userProfile, onDecision, mo
       <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-repeat bg-[length:450px_auto]">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] px-4 py-2 shadow-sm relative text-[14px] leading-tight ${msg.sender === 'user' ? 'bg-[#d9fdd3] rounded-l-lg rounded-br-lg' : 'bg-white rounded-r-lg rounded-bl-lg'}`}>
-              <p className="pr-12 text-[#111b21]">{msg.text}</p>
-              <div className="absolute bottom-1 right-2 flex items-center space-x-1 text-[9px] text-[#667781]">
-                <span>{msg.timestamp}</span>
-                {msg.sender === 'user' && <CheckCheck className="w-3.5 h-3.5 text-[#53bdeb]" />}
+            {msg.isAudio ? (
+              <AudioBubble 
+                onPlayStarted={startAudioSequence} 
+                onComplete={() => onDecision('login')} 
+                onVolumeChange={onVolumeChange}
+              />
+            ) : (
+              <div className={`max-w-[85%] px-4 py-2 shadow-sm relative text-[14px] leading-tight ${msg.sender === 'user' ? 'bg-[#d9fdd3] rounded-l-lg rounded-br-lg' : 'bg-white rounded-r-lg rounded-bl-lg'}`}>
+                <p className="pr-12 text-[#111b21]">{msg.text}</p>
+                <div className="absolute bottom-1 right-2 flex items-center space-x-1 text-[9px] text-[#667781]">
+                  <span>{msg.timestamp}</span>
+                  {msg.sender === 'user' && <CheckCheck className="w-3.5 h-3.5 text-[#53bdeb]" />}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         ))}
 
-        {audioStep && <AudioBubble onPlayStarted={startAudioSequence} onComplete={() => onDecision('login')} />}
         {isTyping && <div className="bg-white px-4 py-2 rounded-xl text-xs italic text-[#667781] w-fit animate-pulse shadow-sm border border-black/5">digitando...</div>}
-        <div ref={messagesEndRef} />
+        
+        {showFinalCta && (
+          <div className="flex justify-start animate-in zoom-in slide-in-from-left-4 duration-500 py-2">
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden min-w-[240px] max-w-[85%] border border-black/5">
+              <div className="px-4 py-3 text-[14px] text-[#111b21]">
+                Acesse o sistema por aqui:
+              </div>
+              <button 
+                onClick={() => onDecision('login')}
+                className="w-full border-t border-gray-100 py-4 px-4 text-[#00a884] font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-gray-50 active:bg-gray-100 transition-colors uppercase tracking-tight"
+              >
+                <ExternalLink className="w-4 h-4" />
+                ACESSAR SUPER DEEP DARK WEB
+              </button>
+            </div>
+          </div>
+        )}
+        
+        <div ref={messagesEndRef} className="h-4" />
       </div>
 
       <div className="bg-[#F0F2F5] p-2 pb-4 flex items-end space-x-2 relative z-50">
