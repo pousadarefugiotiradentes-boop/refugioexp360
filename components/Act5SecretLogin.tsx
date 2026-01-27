@@ -61,7 +61,7 @@ const DataRainBackground = () => {
 const Act5SecretLogin: React.FC<Act5SecretLoginProps> = ({ onComplete }) => {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [password, setPassword] = useState('P@odeQueijo2026'); 
+  const [password, setPassword] = useState('meurefugio'); 
   const [isRecovering, setIsRecovering] = useState(false);
   const [recoveryMessage, setRecoveryMessage] = useState<string | null>(null);
 
