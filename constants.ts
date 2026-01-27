@@ -14,22 +14,38 @@ export const HERO_IMAGE_URL = "https://i.postimg.cc/s2DLqsvJ/fachada-pousada-ref
 export const LOGO_URL = "https://i.postimg.cc/q7hsz5Yd/logo-refugio-quadrada-sem-fundo.png";
 
 /**
- * Perguntas para o quiz de iniciação (Act 1).
+ * Perguntas para o Act1Quiz.
+ * Define a estrutura de dados necessária para o componente de Quiz.
  */
 export const QUIZ_QUESTIONS = [
   {
     id: 1,
-    text: "O que mais te impede de descansar hoje?",
-    options: ["Excesso de trabalho", "Ruído constante", "Ansiedade", "Falta de conexão"]
+    text: "Como você descreveria seu nível de cansaço hoje?",
+    options: [
+      "Estou no meu limite absoluto",
+      "Preciso de férias urgente",
+      "Dando conta, mas exausto",
+      "Apenas sobrevivendo"
+    ]
   },
   {
     id: 2,
-    text: "Qual é o seu refúgio ideal?",
-    options: ["Montanhas silenciosas", "Casas históricas", "Natureza bruta", "Conforto moderno"]
+    text: "O que você mais busca em um momento de pausa?",
+    options: [
+      "Silêncio absoluto",
+      "Contato com a natureza",
+      "Conforto e boa comida",
+      "Privacidade total"
+    ]
   },
   {
     id: 3,
-    text: "Quanto tempo faz que você não se desliga de verdade?",
-    options: ["Meses", "Anos", "Não lembro", "Estou tentando agora"]
+    text: "Com que frequência você consegue desconectar?",
+    options: [
+      "Nunca",
+      "Raramente",
+      "Apenas no final de semana",
+      "Gostaria que fosse mais"
+    ]
   }
 ];

@@ -97,7 +97,7 @@ const AudioBubble = ({
   );
 };
 
-const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ userProfile, onDecision, mode = 'normal', onFinalComplete, onVolumeChange }) => {
+const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal', onVolumeChange }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
@@ -146,7 +146,6 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ userProfile, onDecision, mo
           addMessage(`Não pode atender agora, né? Entendo... Então, vou te mandar um audio, quando puder escuta!`, 'mentor');
           setTimeout(() => {
             addMessage('', 'mentor', true);
-            // Inicia a sequência de texto automaticamente após 5 segundos, mesmo que não dê play
             setTimeout(() => {
               if (!sequenceStartedRef.current) {
                 startAudioSequence();
@@ -157,16 +156,15 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ userProfile, onDecision, mo
       }
     };
     runScript();
-  }, [step]);
+  }, [step, mode]);
 
-  // Bug Fix: Garantir autoscroll quando novas mensagens chegam, Joaquim está digitando ou o botão final aparece
+  // Auditoria Item D: Otimização do Autoscroll com requestAnimationFrame
   useEffect(() => {
     const scroll = () => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
-    // Pequeno delay para garantir que o DOM renderizou
-    const timeout = setTimeout(scroll, 100);
-    return () => clearTimeout(timeout);
+    const frameId = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(frameId);
   }, [messages, isTyping, showFinalCta]);
 
   const handleUserResponse = (text: string) => {
@@ -201,7 +199,6 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ userProfile, onDecision, mo
         setTimeout(() => {
           setIsTyping(false);
           addMessage(item.text, 'mentor');
-          // No último item, mostra o botão de ação final
           if (index === sequence.length - 1) {
             setTimeout(() => setShowFinalCta(true), 1000);
           }

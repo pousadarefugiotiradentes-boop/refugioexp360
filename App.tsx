@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FunnelStep, UserProfile } from './types';
 import DevIndex from './components/DevIndex';
 import Act0BiometricAnalysis from './components/Act0BiometricAnalysis';
@@ -20,7 +20,7 @@ const App: React.FC = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [whatsappMode, setWhatsappMode] = useState<'normal' | 'after-decline'>('normal');
-  const [userProfile, setUserProfile] = useState<UserProfile>({
+  const [userProfile] = useState<UserProfile>({
     name: 'Visitante',
     struggle: '',
     answers: {}
@@ -30,14 +30,21 @@ const App: React.FC = () => {
   const fadeIntervalRef = useRef<any>(null);
 
   const AUDIO_SOURCE = "https://dl.dropboxusercontent.com/scl/fi/a712ue0yjxqwio6v9b9t5/trilha-exp-360-refugio-TESTE-5-PREMASTERED.mp3?rlkey=hld15nfh2qyjd8virxn14dzmd";
+  const JOAQUIM_VOICE_URL = "https://dl.dropboxusercontent.com/scl/fi/syvbwm8r21kdctghvlkmv/joaquim-chamando.mp3?rlkey=34rdytesptpapd79v128gmtcw";
+  const JOAQUIM_AVATAR = "https://i.postimg.cc/1XhTqCyf/joaquim-perfil-2.png";
   const DEFAULT_VOLUME = 0.7;
 
   useEffect(() => {
-    const preloadImages = [HERO_IMAGE_URL, LOGO_URL];
+    // Pré-carregamento de Ativos (Auditoria Item B)
+    const preloadImages = [HERO_IMAGE_URL, LOGO_URL, JOAQUIM_AVATAR];
     preloadImages.forEach(src => {
       const img = new Image();
       img.src = src;
     });
+
+    const voicePreload = new Audio();
+    voicePreload.src = JOAQUIM_VOICE_URL;
+    voicePreload.preload = "auto";
 
     const audio = new Audio();
     audio.src = AUDIO_SOURCE;
@@ -97,14 +104,12 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Handlers memoizados para evitar re-renders de efeitos colaterais
   const handleStartExperience = useCallback(() => {
     if (mainAudioRef.current) mainAudioRef.current.play().catch(() => {});
     navigateTo(FunnelStep.BIOMETRIC_ANALYSIS);
   }, [navigateTo]);
 
   const handleBiometricComplete = useCallback(() => {
-    // CORREÇÃO: Após a Biometria, o sistema deve ir para a Tela de Erro (Act 0: Error Screen)
     navigateTo(FunnelStep.ERROR_SCREEN);
   }, [navigateTo]);
 

@@ -22,6 +22,7 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
   const [status, setStatus] = useState<'ringing' | 'connected' | 'ended'>('ringing');
   const [timer, setTimer] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
   
   const vibrateRef = useRef<HTMLAudioElement | null>(null);
   const joaquimVoiceRef = useRef<HTMLAudioElement | null>(null);
@@ -125,6 +126,23 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
     }
   };
 
+  // Handlers para gesto de arrastar para cima (Swipe Up)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartY(e.touches[0].clientY);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartY === null) return;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaY = touchStartY - touchEndY;
+    
+    // Se arrastou para cima mais que 30px, aceita a chamada
+    if (deltaY > 30) {
+      handleAccept();
+    }
+    setTouchStartY(null);
+  };
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -201,11 +219,15 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
             </div>
             
             <div className="flex flex-col items-center gap-4 group">
+              {/* Botão Aceitar Otimizado: Suporta toque, clique e swipe up */}
               <button 
                 onClick={handleAccept} 
-                className="w-18 h-18 md:w-22 md:h-22 bg-[#00a884] rounded-full flex items-center justify-center shadow-[0_15px_30px_rgba(0,168,132,0.3)] active:scale-90 transition-all hover:brightness-110 animate-bounce"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                className="w-18 h-18 md:w-22 md:h-22 bg-[#00a884] rounded-full flex items-center justify-center shadow-[0_15px_30px_rgba(0,168,132,0.3)] active:scale-95 touch-none transition-all hover:brightness-110 animate-bounce"
+                aria-label="Aceitar Chamada"
               >
-                <Phone className="text-white fill-white w-8 h-8 md:w-10 md:h-10" />
+                <Phone className="text-white fill-white w-8 h-8 md:w-10 md:h-10 pointer-events-none" />
               </button>
               <span className="text-[13px] text-[#8696a0] font-bold uppercase tracking-widest group-hover:text-[#00a884] transition-colors">Aceitar</span>
             </div>
