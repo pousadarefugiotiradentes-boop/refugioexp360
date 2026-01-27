@@ -36,6 +36,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     // Pré-carregamento de Ativos (Auditoria Item B)
+    // Fix: correct variable name from 'preload images' to 'preloadImages'
     const preloadImages = [HERO_IMAGE_URL, LOGO_URL, JOAQUIM_AVATAR];
     preloadImages.forEach(src => {
       const img = new Image();
@@ -216,7 +217,7 @@ const App: React.FC = () => {
       {step === FunnelStep.PHONE_CALL && <Act3PhoneCall userProfile={userProfile} onComplete={handleCallComplete} onDecline={handleCallDecline} onVolumeChange={(vol) => fadeVolume(vol, 1200)} />}
       {step === FunnelStep.SECRET_LOGIN && <Act5SecretLogin onComplete={handleSecretLoginComplete} />}
       {step === FunnelStep.AUTODESTRUCT && <Act6Autodestruct onComplete={() => navigateTo(FunnelStep.OFFER)} />}
-      {step === FunnelStep.OFFER && <Act4Offer userProfile={userProfile} />}
+      {step === FunnelStep.OFFER && <Act4Offer userProfile={userProfile} onAbort={() => navigateTo(FunnelStep.AUTODESTRUCT)} />}
 
       <button onClick={() => setStep(FunnelStep.INDEX)} className="fixed bottom-4 right-4 z-[9999] bg-white/5 text-white/20 p-3 rounded-full border border-white/5">
         <LayoutGrid className="w-5 h-5" />

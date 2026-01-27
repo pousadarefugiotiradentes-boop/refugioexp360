@@ -13,17 +13,21 @@ import {
   Navigation,
   Eye,
   Maximize2,
-  TreePine
+  TreePine,
+  ShieldAlert
 } from 'lucide-react';
 
 interface Act4OfferProps {
   userProfile: UserProfile;
+  onAbort?: () => void;
 }
 
-const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile }) => {
+const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort }) => {
   const BOOKING_URL = "https://www.refugiotiradentes.com.br/";
   const VIRTUAL_TOUR_URL = "https://www.google.com/maps/embed?pb=!4v1769471411322!6m8!1m7!1sCAoSHENJQUJJaERwb19wdS1DUVpLN2pRY1g1QW81ZkE.!2m2!1d-21.10843422899292!2d-44.16852750791136!3f353.93514061676234!4f-0.5637616834684138!5f0.7820865974627469";
-  const YOUTUBE_EMBED_URL = "https://www.youtube.com/embed/KYBYv6fQX0o?rel=0";
+  
+  const YOUTUBE_ID = "KYBYv6fQX0o";
+  const YOUTUBE_EMBED_URL = `https://www.youtube.com/embed/${YOUTUBE_ID}?enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`;
   
   const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=2000";
 
@@ -107,10 +111,10 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile }) => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               {[
-                { icon: Coffee, title: "Café da Manhã Mineiro", desc: "Pão de queijo quentinho e bolos feitos em casa. Mesa farta, típica de \"casa de vó\"" },
-                { icon: Car, title: "Estacionamento Coberto", desc: "Deixe seu carro seguro aqui e vai caminhar" },
+                { icon: Coffee, title: "Café da Manhã Mineiro", desc: "Pão de queijo quentinho, bolos feitos em casa. Mesa farta típica de casa de vó" },
+                { icon: Car, title: "Estacionamento Coberto", desc: "Deixe seu carro seguro aqui e vai caminhar por Tiradentes sossegado" },
                 { icon: MapPin, title: "Localização Privilegiada", desc: "Perto do centro o bastante para ir a pé, longe o suficiente para o seu sossego" },
-                { icon: TreePine, title: "Paz, Tranquilidade e Sossego", desc: "Um refúgio seguro para recuperar as energias" }
+                { icon: TreePine, title: "Paz, Tranquilidade e Sossego", desc: "Um refúgio seguro para descansar e recuperar as energias" }
               ].map((item, i) => (
                 <div key={i} className="flex flex-col gap-4 p-8 rounded-[2rem] bg-zinc-900 border border-white/5 hover:border-amber-500/30 transition-all group">
                   <item.icon className="w-10 h-10 text-amber-500" />
@@ -125,7 +129,7 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile }) => {
 
           <div className="relative group">
              <div className="absolute -inset-10 bg-amber-500/5 blur-[100px] rounded-full"></div>
-             <div className="relative aspect-video rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 group-hover:scale-[1.01] transition-transform duration-700">
+             <div className="relative aspect-video rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 group-hover:scale-[1.01] transition-transform duration-700 bg-black">
                 <iframe 
                   width="100%" 
                   height="100%" 
@@ -201,28 +205,49 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile }) => {
 
       {/* CTA Final */}
       <section className="py-40 px-6 bg-[#050505] relative overflow-hidden border-t border-white/5">
-        <div className="max-w-4xl mx-auto text-center space-y-12 relative z-10">
+        <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10 flex flex-col items-center">
           <h3 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter leading-[0.85] text-white">
             TÁ ESPERANDO <span className="text-amber-500 underline decoration-white/10">O QUÊ?</span>
           </h3>
-          <p className="text-zinc-400 text-xl md:text-3xl font-medium">
-            A sua única missão aqui? Descansar e se divertir!
+          <p className="text-zinc-400 text-xl md:text-3xl font-medium mb-4">
+            A sua única missão aqui? Descansar!
           </p>
-          <button 
-            onClick={handleBooking}
-            className="w-full max-w-lg bg-white text-black py-8 rounded-[2.5rem] font-black text-2xl uppercase tracking-widest hover:bg-amber-500 transition-all shadow-[0_40px_80px_-20px_rgba(255,255,255,0.15)] active:scale-95 group"
-          >
-            CONFIRMAR PLANO DE FUGA
-          </button>
+          <div className="w-full max-w-lg space-y-4">
+            <button 
+              onClick={handleBooking}
+              className="w-full bg-white text-black py-8 rounded-[2.5rem] font-black text-2xl uppercase tracking-widest hover:bg-amber-500 transition-all shadow-[0_40px_80px_-20px_rgba(255,255,255,0.15)] active:scale-95 group"
+            >
+              CONFIRMAR PLANO DE FUGA
+            </button>
+            
+            <button 
+              onClick={onAbort}
+              className="w-full bg-transparent border-2 border-red-900/30 text-red-600/50 py-5 rounded-[2rem] font-black text-sm uppercase tracking-[0.3em] hover:bg-red-900/10 hover:text-red-600 hover:border-red-600 transition-all active:scale-95 flex items-center justify-center gap-3"
+            >
+              <ShieldAlert className="w-4 h-4" />
+              ABORTAR MISSÃO
+            </button>
+          </div>
         </div>
       </section>
 
-      <footer className="py-20 text-center flex flex-col items-center gap-6 bg-black">
-         <div className="w-20 h-20 bg-white rounded-full p-2.5 flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-transform hover:scale-110">
-            <img src={LOGO_URL} alt="Logo" className="w-full h-full object-contain" />
+      <footer className="py-24 text-center flex flex-col items-center gap-8 bg-black">
+         {/* Box circular da logo - aspect-square e rounded-full para formar um círculo perfeito */}
+         <div className="w-full max-w-lg aspect-square bg-white rounded-full p-16 flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.05)] transition-transform hover:scale-[1.02]">
+            <img src={LOGO_URL} alt="Logo Refúgio" className="w-full max-w-[320px] h-auto object-contain" />
          </div>
-         <p className="text-sm md:text-base text-zinc-600 uppercase tracking-[0.5em] font-bold">Tú és o meu Refúgio e a minha fortaleza.</p>
-         <div className="flex gap-4 opacity-20">
+         
+         <div className="space-y-6 w-full px-4 overflow-hidden">
+           {/* Frase com quebra de linha forçada: "Tu és o meu Refúgio" / "e minha fortaleza." */}
+           <p className="text-sm sm:text-lg md:text-xl text-zinc-500 uppercase tracking-[0.2em] sm:tracking-[0.4em] md:tracking-[0.6em] font-black leading-tight mx-auto">
+             Tú és o meu Refúgio <br /> e minha fortaleza.
+           </p>
+           <p className="text-[10px] sm:text-[11px] text-zinc-700 uppercase tracking-[0.4em] font-bold">
+             Feito com ❤️ pel'O Forno
+           </p>
+         </div>
+
+         <div className="flex gap-4 opacity-10">
             <Heart className="w-5 h-5 text-red-500 animate-pulse" />
          </div>
       </footer>
