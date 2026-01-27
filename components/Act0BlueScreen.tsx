@@ -27,31 +27,42 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
       console.warn("Autoplay do som de erro bloqueado ou falhou. Requer interação prévia.");
     });
 
-    const totalDuration = mode === 'intro' ? 5500 : 9000;
-
-    let interval: any;
-    if (mode === 'final') {
-      interval = setInterval(() => {
-        setPercentage(prev => {
-          if (prev < 100) {
-            const inc = Math.random() > 0.7 ? Math.floor(Math.random() * 3) + 1 : 1;
-            return Math.min(100, prev + inc);
-          }
-          return 100;
-        });
-      }, 150);
-    }
-
-    const completeTimer = setTimeout(onComplete, totalDuration);
-    
     return () => {
-      clearTimeout(completeTimer);
-      if (interval) clearInterval(interval);
       if (errorAudioRef.current) {
         errorAudioRef.current.pause();
         errorAudioRef.current = null;
       }
     };
+  }, []);
+
+  useEffect(() => {
+    // Lógica para o modo INTRO (Tempo fixo)
+    if (mode === 'intro') {
+      const timer = setTimeout(onComplete, 5500);
+      return () => clearTimeout(timer);
+    }
+
+    // Lógica para o modo FINAL (Depende da barra de progresso)
+    if (mode === 'final') {
+      const interval = setInterval(() => {
+        setPercentage(prev => {
+          if (prev < 100) {
+            const inc = Math.random() > 0.7 ? Math.floor(Math.random() * 3) + 1 : 1;
+            const next = Math.min(100, prev + inc);
+            
+            // Quando atingir 100%, aguardamos um breve momento para o usuário ver o estado concluído e chamamos o complete
+            if (next === 100) {
+              clearInterval(interval);
+              setTimeout(onComplete, 1200); 
+            }
+            return next;
+          }
+          return 100;
+        });
+      }, 100); // Velocidade ajustada para fluidez
+
+      return () => clearInterval(interval);
+    }
   }, [onComplete, mode]);
 
   if (mode === 'intro') {

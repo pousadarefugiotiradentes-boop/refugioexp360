@@ -26,24 +26,20 @@ const App: React.FC = () => {
 
   // Motor de áudio persistente
   const mainAudioRef = useRef<HTMLAudioElement | null>(null);
+  const fadeIntervalRef = useRef<any>(null);
 
-  /**
-   * LINK DIRETO OPTIMIZADO (Dropbox):
-   * Convertemos 'www.dropbox.com' para 'dl.dropboxusercontent.com' 
-   * Isso evita a página de visualização do Dropbox e entrega o arquivo bruto.
-   */
   const AUDIO_SOURCE = "https://dl.dropboxusercontent.com/scl/fi/a712ue0yjxqwio6v9b9t5/trilha-exp-360-refugio-TESTE-5-PREMASTERED.mp3?rlkey=hld15nfh2qyjd8virxn14dzmd";
+  const DEFAULT_VOLUME = 0.7;
 
   useEffect(() => {
     const audio = new Audio();
     audio.src = AUDIO_SOURCE;
     audio.loop = false;
-    audio.volume = 0.7;
+    audio.volume = DEFAULT_VOLUME;
     audio.preload = "auto";
     
-    // Tratamento de erros de carregamento
     audio.onerror = () => {
-      console.warn("Aviso: Falha ao carregar áudio do Dropbox. Verifique se o link ainda é válido.");
+      console.warn("Aviso: Falha ao carregar áudio do Dropbox.");
     };
 
     mainAudioRef.current = audio;
@@ -54,8 +50,33 @@ const App: React.FC = () => {
         mainAudioRef.current.src = "";
         mainAudioRef.current = null;
       }
+      if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
     };
   }, []);
+
+  const fadeVolume = (targetVolume: number, duration: number = 1000) => {
+    if (!mainAudioRef.current) return;
+    
+    if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+    
+    const startVolume = mainAudioRef.current.volume;
+    const distance = targetVolume - startVolume;
+    const steps = 20;
+    const stepDuration = duration / steps;
+    let currentStep = 0;
+
+    fadeIntervalRef.current = setInterval(() => {
+      currentStep++;
+      if (mainAudioRef.current) {
+        mainAudioRef.current.volume = startVolume + (distance * (currentStep / steps));
+      }
+      
+      if (currentStep >= steps) {
+        if (mainAudioRef.current) mainAudioRef.current.volume = targetVolume;
+        clearInterval(fadeIntervalRef.current);
+      }
+    }, stepDuration);
+  };
 
   const toggleMute = () => {
     if (mainAudioRef.current) {
@@ -79,7 +100,6 @@ const App: React.FC = () => {
 
   const startExperience = () => {
     if (mainAudioRef.current) {
-      // Forçamos o play após a interação do usuário (obrigatório em navegadores modernos)
       mainAudioRef.current.play().catch(e => {
         console.error("Erro ao reproduzir áudio:", e);
       });
@@ -120,10 +140,12 @@ const App: React.FC = () => {
   };
 
   const handleCallComplete = () => {
+    fadeVolume(DEFAULT_VOLUME, 1000);
     navigateTo(FunnelStep.SECRET_LOGIN, 500);
   };
 
   const handleCallDecline = () => {
+    fadeVolume(DEFAULT_VOLUME, 1000);
     navigateTo(FunnelStep.OFFER, 500);
   };
 
@@ -153,7 +175,6 @@ const App: React.FC = () => {
     return <DevIndex onSelectStep={handleSelectDevStep} onStartNormalFlow={() => setStep(FunnelStep.START_SCREEN)} />;
   }
 
-  // TELA INICIAL (Sexto Sentido)
   if (step === FunnelStep.START_SCREEN) {
     return (
       <div className="min-h-screen w-full bg-[#050505] flex flex-col items-center justify-center p-6 font-mono overflow-hidden">
@@ -193,12 +214,6 @@ const App: React.FC = () => {
           </div>
         </div>
         
-        <div className="absolute bottom-8 left-0 w-full flex justify-between px-10 opacity-10 pointer-events-none">
-          <span className="text-[8px] uppercase tracking-[0.8em] text-white font-bold">BIT_OS</span>
-          <span className="text-[8px] uppercase tracking-[0.8em] text-white font-bold">SYSTEM_READY</span>
-          <span className="text-[8px] uppercase tracking-[0.8em] text-white font-bold">V.2026</span>
-        </div>
-        
         <DevControls />
       </div>
     );
@@ -213,7 +228,14 @@ const App: React.FC = () => {
       {step === FunnelStep.BLUE_SCREEN && <Act0BlueScreen mode={blueScreenMode} onComplete={handleBlueScreenComplete} />}
       {step === FunnelStep.BREATHING && <Act0Breathing onComplete={handleBreathingComplete} />}
       {step === FunnelStep.WHATSAPP && <Act2WhatsApp userProfile={userProfile} onDecision={handleWhatsAppDecision} />}
-      {step === FunnelStep.PHONE_CALL && <Act3PhoneCall userProfile={userProfile} onComplete={handleCallComplete} onDecline={handleCallDecline} />}
+      {step === FunnelStep.PHONE_CALL && (
+        <Act3PhoneCall 
+          userProfile={userProfile} 
+          onComplete={handleCallComplete} 
+          onDecline={handleCallDecline} 
+          onVolumeChange={(vol) => fadeVolume(vol, 1200)}
+        />
+      )}
       {step === FunnelStep.SECRET_LOGIN && <Act5SecretLogin onComplete={handleLoginComplete} />}
       {step === FunnelStep.AUTODESTRUCT && <Act6Autodestruct />}
       {step === FunnelStep.OFFER && <Act4Offer userProfile={userProfile} />}
