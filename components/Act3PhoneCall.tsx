@@ -156,7 +156,7 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
       <div className="relative z-20 flex flex-col items-center text-center pt-16 px-6">
         <div className="flex items-center gap-1.5 text-[#8696a0] text-[10px] font-black uppercase tracking-[0.15em] mb-2 opacity-60">
           <Lock className="w-3 h-3" />
-          <span>Segurança de ponta a ponta</span>
+          <span>Criptografia de ponta a ponta</span>
         </div>
         <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#e9edef] drop-shadow-sm">Joaquim Recepção</h2>
         

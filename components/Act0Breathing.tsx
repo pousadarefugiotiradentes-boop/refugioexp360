@@ -34,7 +34,7 @@ const Act0Breathing: React.FC<Act0BreathingProps> = ({ onComplete }) => {
   const warnings = [
     "REBOOT_PULMONAR",
     "VOCÊ ESTÁ RESPIRANDO?!",
-    "Respire com o balão!"
+    "RESPIRE COM O BALÃO!"
   ];
 
   const popups = [

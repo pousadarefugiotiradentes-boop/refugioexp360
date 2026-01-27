@@ -49,7 +49,7 @@ const Act0BiometricAnalysis: React.FC<Act0BiometricAnalysisProps> = ({ onComplet
     "► Avaliando adrenalina e noradrenalina...",
     "► Verificando serotonina e dopamina...",
     "⚠️ ALERTA: Níveis críticos detectados...",
-    "🔴 DIAGNÓSTICO COMPLETO"
+    "🔴 CHAMAR SAMU (192)"
   ];
 
   useEffect(() => {
@@ -117,7 +117,7 @@ const Act0BiometricAnalysis: React.FC<Act0BiometricAnalysisProps> = ({ onComplet
       <div className="w-full flex justify-between items-start text-sm text-zinc-600 uppercase tracking-widest z-30">
         <div className="flex items-center gap-2">
           <div className={`w-2 h-2 rounded-full ${isAlert ? 'bg-red-500' : 'bg-zinc-700'} animate-pulse`}></div>
-          HEALTH_PROTOCOL_v4.2
+          STRESS_DETECTOR_v2.1
         </div>
         <div className="text-right">ID: E46820<br/><span className={isAlert ? "text-red-600 font-bold" : "animate-pulse"}>
           {isAlert ? "CRITICAL_LEVEL" : "SINAL_ESTÁVEL"}
@@ -164,7 +164,7 @@ const Act0BiometricAnalysis: React.FC<Act0BiometricAnalysisProps> = ({ onComplet
         </div>
         
         <div className="text-center text-[10px] text-zinc-800 uppercase tracking-[0.8em] opacity-40">
-          PROPRIEDADE DA LOVART INDUSTRIES • EXTRAÇÃO_DE_DADOS_ATIVA
+          FEITO COM ♡ PEL´O FORNO • COLETA_DADOS_BIOMETRICOS
         </div>
       </div>
     </div>

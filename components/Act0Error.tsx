@@ -42,7 +42,7 @@ const Act0Error: React.FC<Act0ErrorProps> = ({ onComplete }) => {
           <div className="space-y-2">
             <div className="flex items-center space-x-2 text-red-500 mb-1">
               <ShieldAlert className="w-5 h-5" />
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] font-mono">CRITICAL_OVERLOAD</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] font-mono">CRITICAL_OVERLOAD | SOBRECARGA CRÍTICA</span>
             </div>
             <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] italic text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">
               STRESS<br/>
@@ -53,7 +53,7 @@ const Act0Error: React.FC<Act0ErrorProps> = ({ onComplete }) => {
           <div className="space-y-6">
             <div className="text-[14px] leading-relaxed text-zinc-400">
               <div className="font-mono mb-4 text-[#8EFF8E]/80 text-[12px] leading-relaxed">
-                <span className="bg-[#8EFF8E]/20 text-[#8EFF8E] px-1 font-bold mr-2 border border-[#8EFF8E]/30">LOG_SYSTEM:</span> 
+                <span className="bg-[#8EFF8E]/20 text-[#8EFF8E] px-1 font-bold mr-2 border border-[#8EFF8E]/30">LOG:</span> 
                 Atividade biométrica irregular. Seus níveis de cortisol estão acima dos limites saudáveis. Recomendamos realizar uma respiração profunda e reiniciar seu sistema.
               </div>
             </div>

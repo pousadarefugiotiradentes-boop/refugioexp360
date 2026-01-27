@@ -1,4 +1,5 @@
 
+// Correcting the corrupted React import and removing misplaced type definitions.
 import React, { useEffect, useState, useRef } from 'react';
 import { Monitor, Terminal } from 'lucide-react';
 
@@ -75,15 +76,15 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
             <div className="border-b border-[#8EFF8E]/30 pb-2 mb-4 flex justify-between items-center uppercase tracking-widest text-[10px]">
                <div className="flex items-center space-x-2">
                  <Terminal className="w-3 h-3" />
-                 <span>LOVART_OS_V.01.2026</span>
+                 <span>OFORNO_OS_V.02.2026</span>
                </div>
-               <span>640KB_RAM</span>
+               <span>64KB_RAM</span>
             </div>
 
             <div className="space-y-1 text-xs md:text-base">
               <p className="flex items-center space-x-2">
                 <span className="bg-[#8EFF8E] text-black px-1 font-bold">FATAL ERROR</span>
-                <span>at 0x00401234</span>
+                <span>at 0x27012026</span>
               </p>
               <p className="opacity-60 text-[10px]">*** STOP: 0x0000007B (0xF741B84C, 0xC0000034)</p>
             </div>
@@ -91,13 +92,13 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
             <div className="mt-8 space-y-4">
               <h2 className="text-xl md:text-3xl font-black uppercase italic leading-tight text-white border-l-4 border-red-600 pl-4">
                 INICIANDO SEQUÊNCIA DE<br/>
-                RESPIRAÇÃO FORÇADA!
+                RESPIRAÇÃO PROFUNDA!
               </h2>
               
               <div className="space-y-1 text-[10px] md:text-sm text-zinc-400">
-                <p>> Verificando pulmões...</p>
-                <p>> Carregando oxigenação JAAAS...</p>
-                <p className="text-[#8EFF8E] animate-pulse">> STATUS: Aguarde o balão...</p>
+                <p>> Verificando atividade dos pulmões...</p>
+                <p>> Carregando balão de oxigênio</p>
+                <p className="text-[#8EFF8E] animate-pulse">> STATUS: Chamando SAMU...</p>
               </div>
             </div>
           </div>
@@ -111,7 +112,7 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
 
         <div className="absolute bottom-4 left-6 right-6 flex justify-between items-end opacity-20 text-[7px] uppercase tracking-[0.3em]">
           <span>BIOS: 01/23/26</span>
-          <span>(C) LOVART_INDUSTRIES</span>
+          <span>(C) OFORNO_INDUSTRIES</span>
         </div>
       </div>
     );
@@ -125,7 +126,7 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
           <h1 className="text-2xl md:text-5xl font-black leading-tight uppercase tracking-tighter">PROBLEMA DETECTADO:</h1>
           
           <div className="space-y-4 text-sm md:text-xl font-bold leading-tight opacity-90">
-            <p>Seu dispositivo detectou que você não respirou fundo o suficiente.</p>
+            <p>Seu dispositivo detectou que você <span className="font-black">NÃO</span> respirou fundo o suficiente.</p>
             <p>Se é a primeira vez que vê essa tela, respire fundo novamente.</p>
             <p>Verifique se seu celular não está consumindo sua sanidade e desative todas as notificações relacionadas ao trabalho.</p>
           </div>
@@ -143,7 +144,7 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
                 <div className="absolute inset-0 bg-white transition-all duration-300" style={{ width: `${Math.min(percentage, 100)}%` }}></div>
                 <div className="absolute inset-0 flex items-center justify-center mix-blend-difference font-black text-xs">{Math.min(percentage, 100)}% CONCLUÍDO</div>
              </div>
-             <p className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] animate-pulse text-center">Redirecionando consciência para Joaquim Recepção...</p>
+             <p className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] animate-pulse text-center">Chamando o SAMU...</p>
           </div>
         </div>
       </div>

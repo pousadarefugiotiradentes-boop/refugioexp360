@@ -103,10 +103,10 @@ const Act5SecretLogin: React.FC<Act5SecretLoginProps> = ({ onComplete }) => {
           <div className="flex flex-col items-center">
             <span className="text-sm font-normal text-[#E0E0E0] mb-1 uppercase tracking-tighter">Super Deep Dark Web</span>
             <h1 className="text-2xl md:text-3xl font-bold text-[#FFB700] tracking-wide uppercase italic drop-shadow-[0_0_10px_rgba(255,183,0,0.4)]">
-              FOOCKING.COM
+              REFÚGIO TIRADENTES
             </h1>
             <p className="mt-3 text-xs md:text-[12px] font-normal text-[#D4AF37] italic">
-              "Don't be a Boocker, be a Foocker!"
+              "Tú és o meu Refúgio!"
             </p>
           </div>
         </div>
@@ -196,7 +196,7 @@ const Act5SecretLogin: React.FC<Act5SecretLoginProps> = ({ onComplete }) => {
         </form>
 
         <p className="mt-8 text-center text-[10px] text-gray-600 font-bold animate-pulse uppercase tracking-tight">
-          ATENÇÃO: JAMAIS compartilhe seu LOGIN e SENHA com ninguem.
+          ATENÇÃO: JAMAIS compartilhe seu LOGIN e SENHA com ninguém.
         </p>
       </div>
 

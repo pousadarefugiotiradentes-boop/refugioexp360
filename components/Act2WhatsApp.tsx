@@ -135,7 +135,7 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
         setTimeout(() => setShowOptions(true), 1000);
       } else if (step === 10) {
         setIsTyping(true);
-        setTimeout(() => { setIsTyping(false); addMessage(`preciso de te contar sobre uns segredos que descobri em Tiradentes...`, 'mentor'); setStep(11); }, 2000);
+        setTimeout(() => { setIsTyping(false); addMessage(`Preciso de te contar sobre uns segredos que descobri em Tiradentes...`, 'mentor'); setStep(11); }, 2000);
       } else if (step === 11) {
         setIsTyping(true);
         setTimeout(() => { setIsTyping(false); addMessage("Você tem um minuto aí? Posso te ligar?", 'mentor'); setStep(14); }, 2500);
@@ -227,7 +227,7 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
           <ArrowLeft className="w-5 h-5" />
           <img src="https://i.postimg.cc/1XhTqCyf/joaquim-perfil-2.png" className="w-10 h-10 rounded-full object-cover border border-white/10" alt="J" />
           <div>
-            <h1 className="font-bold text-sm">Joaquim Recepção</h1>
+            <h1 className="font-bold text-sm">Joaquim da Recepção</h1>
             <p className="text-[10px] opacity-80">{isOnline ? 'online' : 'conectando...'}</p>
           </div>
         </div>
@@ -265,7 +265,7 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
           <div className="flex justify-start animate-in zoom-in slide-in-from-left-4 duration-500 py-2">
             <div className="bg-white rounded-lg shadow-sm overflow-hidden min-w-[240px] max-w-[85%] border border-black/5">
               <div className="px-4 py-3 text-[14px] text-[#111b21]">
-                Acesse o sistema por aqui:
+                Acesse o sistema aqui:
               </div>
               <button 
                 onClick={() => onDecision('login')}
@@ -359,7 +359,7 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
           
           <div className="space-y-2">
             <button onClick={() => onDecision('call')} className="w-full bg-[#00a884] text-white py-4 rounded-2xl font-black uppercase tracking-tight flex justify-between items-center px-6 shadow-lg hover:brightness-110 active:scale-[0.98] transition-all">
-              <span>PODE LIGAR AGORA!</span>
+              <span>Pode ligar, uai!</span>
               <Phone className="w-5 h-5 fill-current" />
             </button>
             
