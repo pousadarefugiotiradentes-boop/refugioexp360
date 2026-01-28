@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { AlertTriangle, Zap, Terminal, ShieldX } from 'lucide-react';
 
@@ -25,7 +24,8 @@ const Act6Autodestruct: React.FC<Act6AutodestructProps> = ({ onComplete }) => {
   useEffect(() => {
     // Inicializa o som de erro
     const audio = new Audio(ERROR_SFX_URL);
-    audio.volume = 0.7;
+    // Aumentado em 50%: 0.7 * 1.5 = 1.05 -> 1.0 (limitado ao máximo)
+    audio.volume = 1.0;
     errorAudioRef.current = audio;
 
     return () => {

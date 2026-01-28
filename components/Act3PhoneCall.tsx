@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { UserProfile } from '../types';
 import { 
@@ -51,7 +50,8 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
   useEffect(() => {
     const vibrateAudio = new Audio(VIBRATE_SFX_URL);
     vibrateAudio.loop = true;
-    vibrateAudio.volume = 0.8;
+    // Aumentado em 50%: 0.8 * 1.5 = 1.2 -> 1.0 (limitado ao máximo)
+    vibrateAudio.volume = 1.0;
     vibrateRef.current = vibrateAudio;
     
     const voiceAudio = new Audio(JOAQUIM_VOICE_URL);

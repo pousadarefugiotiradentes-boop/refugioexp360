@@ -9,7 +9,8 @@ import {
   Navigation, 
   Eye, 
   TreePine, 
-  ShieldAlert 
+  ShieldAlert,
+  ChevronDown
 } from 'lucide-react';
 
 interface Act4OfferProps {
@@ -33,7 +34,7 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
         
-        <div className="relative z-30 max-w-5xl w-full mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-12 duration-1000 pb-16">
+        <div className="relative z-30 max-w-5xl w-full mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-12 duration-1000 pb-24">
           <div className="space-y-4">
             <div className="bg-amber-500 text-black text-[11px] md:text-[13px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-xl w-fit">
               PLANO DE FUGA ATIVADO
@@ -51,6 +52,14 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort }) => {
           >
             PERSONALIZAR PLANO DE FUGA <ArrowRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" />
           </button>
+        </div>
+
+        {/* Scroll Indicator Arrow */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2 opacity-80 hover:opacity-100 transition-opacity animate-in fade-in duration-1000 delay-500">
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-500/60 mb-2">Role para descobrir</span>
+          <div className="animate-bounce">
+            <ChevronDown className="w-10 h-10 text-amber-500 stroke-[3px]" />
+          </div>
         </div>
       </section>
 

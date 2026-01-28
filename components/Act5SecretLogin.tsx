@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Shield, Key, Eye, EyeOff, Terminal, ArrowRight, RefreshCw, CheckCircle2 } from 'lucide-react';
 
@@ -141,21 +140,21 @@ const Act5SecretLogin: React.FC<Act5SecretLoginProps> = ({ onComplete }) => {
 
           <div className="space-y-2">
             <label className="text-[10px] text-gray-500 uppercase tracking-widest font-black">SENHA</label>
-            <div className="relative group">
+            <div 
+              className="relative group cursor-pointer" 
+              onClick={() => setShowPass(!showPass)}
+              title="Clique para revelar/ocultar senha"
+            >
               <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500/50 group-hover:text-amber-500 transition-colors" />
               <input 
                 type={showPass ? 'text' : 'password'}
                 value={password}
                 readOnly
-                className="w-full bg-black/60 border border-white/10 rounded-2xl py-5 pl-12 pr-14 text-sm outline-none text-amber-500 font-mono font-bold tracking-widest"
+                className="w-full bg-black/60 border border-white/10 rounded-2xl py-5 pl-12 pr-14 text-sm outline-none text-amber-500 font-mono font-bold tracking-widest cursor-pointer select-none"
               />
-              <button 
-                type="button"
-                onClick={() => setShowPass(!showPass)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-amber-500 transition-colors"
-              >
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 group-hover:text-amber-500 transition-colors">
                 {showPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+              </div>
             </div>
           </div>
 

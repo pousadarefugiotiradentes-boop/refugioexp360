@@ -16,22 +16,30 @@
       50% { transform: scale(1.05); box-shadow: 0 0 60px rgba(142,255,142,0.6); }
       100% { transform: scale(1); box-shadow: 0 0 40px rgba(142,255,142,0.3); }
     }
+    @keyframes jitter {
+      0% { transform: translateY(0); }
+      25% { transform: translateY(-1.5px) translateX(0.5px); }
+      50% { transform: translateY(1px) translateX(-0.5px); }
+      75% { transform: translateY(-0.8px); }
+      100% { transform: translateY(0); }
+    }
     
     .animate-ecg { animation: ecg 1.5s linear infinite; }
     .animate-scan { animation: scan 3s infinite ease-in-out; }
     .animate-glitch { animation: glitch 0.1s infinite; }
     .animate-slow-zoom { animation: slow-zoom 20s infinite alternate; }
     .animate-button-pulse { animation: button-pulse 2s infinite ease-in-out; }
+    .animate-jitter { animation: jitter 0.15s infinite; }
   </style>
 <script type="importmap">
 {
   "imports": {
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
     "react/": "https://esm.sh/react@^19.2.4/",
     "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
-    "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
   }
 }
 </script>
