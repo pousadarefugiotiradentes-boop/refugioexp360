@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ShieldAlert, Power, AlertTriangle, Heart } from 'lucide-react';
 
@@ -20,7 +19,7 @@ const Act0Error: React.FC<Act0ErrorProps> = ({ onComplete }) => {
       <div className="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center font-mono text-[#8EFF8E]">
         <div className="w-8 h-8 border-2 border-[#8EFF8E]/20 border-t-[#8EFF8E] rounded-full animate-spin mb-4"></div>
         <p className="text-[10px] tracking-widest animate-pulse uppercase">
-          > INITIATING_BIO_SYNC...
+          &gt; INITIATING_BIO_SYNC...
         </p>
       </div>
     );

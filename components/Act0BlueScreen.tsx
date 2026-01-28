@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { Monitor, Terminal } from 'lucide-react';
 
