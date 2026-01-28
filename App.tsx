@@ -15,7 +15,8 @@ import { HERO_IMAGE_URL, LOGO_URL } from './constants';
 import { Shield, Power, Volume2, VolumeX, LayoutGrid } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [step, setStep] = useState<FunnelStep>(FunnelStep.INDEX);
+  // Alterado para FunnelStep.START_SCREEN para ocultar o DevIndex no deploy
+  const [step, setStep] = useState<FunnelStep>(FunnelStep.START_SCREEN);
   const [blueScreenMode, setBlueScreenMode] = useState<'intro' | 'final'>('intro');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -23,6 +24,9 @@ const App: React.FC = () => {
   const [userProfile] = useState<UserProfile>({
     name: 'Visitante'
   });
+
+  // Controle para exibir o DevIndex (pode ser ativado via Console se necessário)
+  const [showDevTools, setShowDevTools] = useState(false);
 
   const mainAudioRef = useRef<HTMLAudioElement | null>(null);
   const fadeIntervalRef = useRef<any>(null);
@@ -33,7 +37,9 @@ const App: React.FC = () => {
   const DEFAULT_VOLUME = 0.7;
 
   useEffect(() => {
-    // Pré-carregamento de Ativos
+    // Expondo função global para reativar o Mission Control se necessário durante testes
+    (window as any).enableMissionControl = () => setShowDevTools(true);
+
     const preloadImages = [HERO_IMAGE_URL, LOGO_URL, JOAQUIM_AVATAR];
     preloadImages.forEach(src => {
       const img = new Image();
@@ -216,9 +222,12 @@ const App: React.FC = () => {
       {step === FunnelStep.AUTODESTRUCT && <Act6Autodestruct onComplete={() => navigateTo(FunnelStep.OFFER)} />}
       {step === FunnelStep.OFFER && <Act4Offer userProfile={userProfile} onAbort={() => navigateTo(FunnelStep.AUTODESTRUCT)} />}
 
-      <button onClick={() => setStep(FunnelStep.INDEX)} className="fixed bottom-4 right-4 z-[9999] bg-white/5 text-white/20 p-3 rounded-full border border-white/5">
-        <LayoutGrid className="w-5 h-5" />
-      </button>
+      {/* Botão de Mission Control agora oculto por padrão no deploy */}
+      {showDevTools && (
+        <button onClick={() => setStep(FunnelStep.INDEX)} className="fixed bottom-4 right-4 z-[9999] bg-white/5 text-white/20 p-3 rounded-full border border-white/5">
+          <LayoutGrid className="w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 };
