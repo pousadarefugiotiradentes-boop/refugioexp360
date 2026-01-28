@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { UserProfile, Message } from '../types';
 import { 
@@ -337,7 +338,7 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
             </button>
 
             <button 
-              onClick={() => handleUserResponse("Tô meu limite, não aguento mais...")} 
+              onClick={() => handleUserResponse("Tô no meu limite, não aguento mais...")} 
               className="w-full bg-white border border-[#8696a0]/30 text-[#54656f] py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-gray-50 active:scale-[0.98] transition-all"
             >
               <span className="text-left">TÔ NO MEU LIMITE</span>
