@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UserProfile } from '../types';
 import { HERO_IMAGE_URL, LOGO_URL } from '../constants';
@@ -7,7 +6,6 @@ import {
   Car, 
   ArrowRight, 
   MapPin, 
-  ShieldCheck,
   Star,
   Heart,
   Navigation,
@@ -23,7 +21,7 @@ interface Act4OfferProps {
 }
 
 const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort }) => {
-  const BOOKING_URL = "https://www.refugiotiradentes.com.br/";
+  const BOOKING_URL = "https://api.whatsapp.com/send?phone=5532998135902&text=Oi%20Joaquim%2C%20gostaria%20de%20ativar%20meu%20plano%20de%20fuga%21";
   const VIRTUAL_TOUR_URL = "https://www.google.com/maps/embed?pb=!4v1769471411322!6m8!1m7!1sCAoSHENJQUJJaERwb19wdS1DUVpLN2pRY1g1QW81ZkE.!2m2!1d-21.10843422899292!2d-44.16852750791136!3f353.93514061676234!4f-0.5637616834684138!5f0.7820865974627469";
   
   const YOUTUBE_ID = "KYBYv6fQX0o";

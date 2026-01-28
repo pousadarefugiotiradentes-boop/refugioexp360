@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Shield, Key, Eye, EyeOff, Terminal, ArrowRight, RefreshCw, CheckCircle2 } from 'lucide-react';
 

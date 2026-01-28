@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { UserProfile, Message } from '../types';
 import { 
-  Phone, MoreVertical, Send, CheckCheck, User, ArrowLeft, Video, 
-  Smile, Paperclip, Camera, Mic, ShieldAlert, Play, Pause, XCircle, Clock, ExternalLink,
-  MessageSquare, Frown, AlertTriangle, Skull
+  Phone, MoreVertical, Send, CheckCheck, ArrowLeft, Video, 
+  Smile, Paperclip, Camera, Mic, Play, Pause, XCircle, Clock, ExternalLink,
+  Frown, AlertTriangle, Skull
 } from 'lucide-react';
 
 interface Act2WhatsAppProps {
@@ -214,7 +213,8 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
-      <div className="bg-[#008069] text-white p-3 flex items-center justify-between shadow-md z-50 h-16 shrink-0">
+      {/* HEADER FIXO NO TOPO */}
+      <div className="sticky top-0 bg-[#008069] text-white p-3 flex items-center justify-between shadow-md z-[100] h-16 shrink-0">
         <div className="flex items-center space-x-2">
           <ArrowLeft className="w-5 h-5 cursor-pointer" />
           <img src="https://i.postimg.cc/1XhTqCyf/joaquim-perfil-2.png" className="w-10 h-10 rounded-full object-cover border border-white/10" alt="J" />
@@ -315,7 +315,6 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
         </div>
       )}
 
-      {/* Sugestões de Resposta Padronizadas (Visual da Imagem 2) */}
       {showOptions && (
         <div className="absolute bottom-24 left-4 right-4 bg-white/95 backdrop-blur p-5 rounded-3xl shadow-2xl space-y-3 border border-[#00a884]/20 animate-in slide-in-from-bottom-8 duration-700 z-[60] max-h-[60vh] overflow-y-auto no-scrollbar">
           <p className="text-[10px] text-[#667781] font-bold uppercase tracking-widest text-center mb-1">Sugestões de Resposta</p>
@@ -356,7 +355,6 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
         </div>
       )}
 
-      {/* Ação Sugerida Padronizada (Visual da Imagem 2) */}
       {step === 14 && !isTyping && (
         <div className="absolute bottom-24 left-4 right-4 bg-white/95 backdrop-blur p-5 rounded-3xl shadow-2xl space-y-3 border border-[#00a884]/20 animate-in slide-in-from-bottom-8 duration-700 z-[60]">
           <p className="text-[10px] text-[#667781] font-bold uppercase tracking-widest text-center mb-1">Ação Sugerida</p>
