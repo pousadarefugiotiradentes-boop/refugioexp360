@@ -21,9 +21,7 @@ const App: React.FC = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [whatsappMode, setWhatsappMode] = useState<'normal' | 'after-decline'>('normal');
   const [userProfile] = useState<UserProfile>({
-    name: 'Visitante',
-    struggle: '',
-    answers: {}
+    name: 'Visitante'
   });
 
   const mainAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -35,8 +33,7 @@ const App: React.FC = () => {
   const DEFAULT_VOLUME = 0.7;
 
   useEffect(() => {
-    // Pré-carregamento de Ativos (Auditoria Item B)
-    // Fix: correct variable name from 'preload images' to 'preloadImages'
+    // Pré-carregamento de Ativos
     const preloadImages = [HERO_IMAGE_URL, LOGO_URL, JOAQUIM_AVATAR];
     preloadImages.forEach(src => {
       const img = new Image();

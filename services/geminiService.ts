@@ -1,6 +1,2 @@
 
-/**
- * ARQUIVO DEPRECADO.
- * A geração de TTS via Gemini foi substituída por áudio estático do Joaquim.
- */
-export const DEPRECATED = true;
+// Arquivo removido para limpeza do projeto conforme solicitado.

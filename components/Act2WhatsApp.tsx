@@ -3,7 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { UserProfile, Message } from '../types';
 import { 
   Phone, MoreVertical, Send, CheckCheck, User, ArrowLeft, Video, 
-  Smile, Paperclip, Camera, Mic, ShieldAlert, Play, Pause, XCircle, Clock, ExternalLink
+  Smile, Paperclip, Camera, Mic, ShieldAlert, Play, Pause, XCircle, Clock, ExternalLink,
+  MessageSquare, Frown, AlertTriangle, Skull
 } from 'lucide-react';
 
 interface Act2WhatsAppProps {
@@ -158,7 +159,6 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
     runScript();
   }, [step, mode]);
 
-  // Auditoria Item D: Otimização do Autoscroll com requestAnimationFrame
   useEffect(() => {
     const scroll = () => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -210,21 +210,13 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
   return (
     <div className="flex flex-col h-screen w-full bg-[#E5DDD5] font-sans overflow-hidden text-[#111b21]">
       <style>{`
-        @keyframes staggeredPulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.03); opacity: 0.95; }
-        }
-        .pulse-1 { animation: staggeredPulse 2s infinite ease-in-out; }
-        .pulse-2 { animation: staggeredPulse 2s infinite ease-in-out 0.5s; }
-        .pulse-3 { animation: staggeredPulse 2s infinite ease-in-out 1s; }
-        .pulse-4 { animation: staggeredPulse 2s infinite ease-in-out 1.5s; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
       <div className="bg-[#008069] text-white p-3 flex items-center justify-between shadow-md z-50 h-16 shrink-0">
         <div className="flex items-center space-x-2">
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-5 h-5 cursor-pointer" />
           <img src="https://i.postimg.cc/1XhTqCyf/joaquim-perfil-2.png" className="w-10 h-10 rounded-full object-cover border border-white/10" alt="J" />
           <div>
             <h1 className="font-bold text-sm">Joaquim da Recepção</h1>
@@ -323,43 +315,55 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
         </div>
       )}
 
+      {/* Sugestões de Resposta Padronizadas (Visual da Imagem 2) */}
       {showOptions && (
-        <div className="absolute bottom-24 left-4 right-4 flex flex-col items-end space-y-2 z-[60] animate-in slide-in-from-bottom-4 duration-500 max-h-[60vh] overflow-y-auto no-scrollbar">
-          <p className="text-[10px] text-[#54656f] font-bold uppercase tracking-wider mb-1 pr-2">Sugestões de Resposta</p>
-          <button 
-            onClick={() => handleUserResponse("Tá tudo jóia, uai! 🙃 E com você?")} 
-            className="pulse-1 bg-[#005c4b] text-white px-6 py-3 rounded-2xl text-[13px] font-bold shadow-xl active:scale-95 transition-all text-right border border-white/10"
-          >
-            Tá tudo jóia, uai! 🙃 E com você?
-          </button>
-          <button 
-            onClick={() => handleUserResponse("Ah, mais ou menos, tô num cansaço danado!")} 
-            className="pulse-2 bg-[#005c4b] text-white px-6 py-3 rounded-2xl text-[13px] font-bold shadow-xl active:scale-95 transition-all text-right border border-white/10 animate-in slide-in-from-bottom-2 duration-700"
-          >
-            Ah, mais ou menos, tô num cansaço danado!
-          </button>
-          <button 
-            onClick={() => handleUserResponse("Tô bem não, tô no meu limite, não aguento mais...")} 
-            className="pulse-3 bg-[#005c4b] text-white px-6 py-3 rounded-2xl text-[13px] font-bold shadow-xl active:scale-95 transition-all text-right border border-white/10 animate-in slide-in-from-bottom-3 duration-800"
-          >
-            Tô bem não, tô no meu limite, não aguento mais...
-          </button>
-          <button 
-            onClick={() => handleUserResponse("Nada é tão ruim que não possa piorar!")} 
-            className="pulse-4 bg-[#005c4b] text-white px-6 py-3 rounded-2xl text-[13px] font-bold shadow-xl active:scale-95 transition-all text-right border border-white/10 animate-in slide-in-from-bottom-4 duration-1000"
-          >
-            Nada é tão ruim que não possa piorar!
-          </button>
+        <div className="absolute bottom-24 left-4 right-4 bg-white/95 backdrop-blur p-5 rounded-3xl shadow-2xl space-y-3 border border-[#00a884]/20 animate-in slide-in-from-bottom-8 duration-700 z-[60] max-h-[60vh] overflow-y-auto no-scrollbar">
+          <p className="text-[10px] text-[#667781] font-bold uppercase tracking-widest text-center mb-1">Sugestões de Resposta</p>
+          
+          <div className="space-y-2">
+            <button 
+              onClick={() => handleUserResponse("Tá tudo jóia, uai! 🙃 E com você?")} 
+              className="w-full bg-[#00a884] text-white py-4 rounded-2xl font-black uppercase tracking-tight flex justify-between items-center px-6 shadow-lg hover:brightness-110 active:scale-[0.98] transition-all"
+            >
+              <span className="text-left">TÁ TUDO JÓIA, UAI!</span>
+              <Smile className="w-5 h-5" />
+            </button>
+
+            <button 
+              onClick={() => handleUserResponse("Ah, mais ou menos, tô num cansaço danado!")} 
+              className="w-full bg-white border border-[#8696a0]/30 text-[#54656f] py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-gray-50 active:scale-[0.98] transition-all"
+            >
+              <span className="text-left">AH, MAIS OU MENOS...</span>
+              <Frown className="w-4 h-4" />
+            </button>
+
+            <button 
+              onClick={() => handleUserResponse("Tô meu limite, não aguento mais...")} 
+              className="w-full bg-white border border-[#8696a0]/30 text-[#54656f] py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-gray-50 active:scale-[0.98] transition-all"
+            >
+              <span className="text-left">TÔ NO MEU LIMITE</span>
+              <AlertTriangle className="w-4 h-4" />
+            </button>
+
+            <button 
+              onClick={() => handleUserResponse("Nada é tão ruim que não possa piorar!")} 
+              className="w-full bg-red-50 border border-red-200 text-red-600 py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-red-100 active:scale-[0.98] transition-all"
+            >
+              <span className="text-left">PODE PIORAR...</span>
+              <Skull className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
 
+      {/* Ação Sugerida Padronizada (Visual da Imagem 2) */}
       {step === 14 && !isTyping && (
         <div className="absolute bottom-24 left-4 right-4 bg-white/95 backdrop-blur p-5 rounded-3xl shadow-2xl space-y-3 border border-[#00a884]/20 animate-in slide-in-from-bottom-8 duration-700 z-[60]">
           <p className="text-[10px] text-[#667781] font-bold uppercase tracking-widest text-center mb-1">Ação Sugerida</p>
           
           <div className="space-y-2">
             <button onClick={() => onDecision('call')} className="w-full bg-[#00a884] text-white py-4 rounded-2xl font-black uppercase tracking-tight flex justify-between items-center px-6 shadow-lg hover:brightness-110 active:scale-[0.98] transition-all">
-              <span>Pode ligar, uai!</span>
+              <span className="text-left">PODE LIGAR, UAI!</span>
               <Phone className="w-5 h-5 fill-current" />
             </button>
             
@@ -367,15 +371,15 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
               onClick={() => { addMessage("Me liga mais tarde", 'user'); setStep(100); }} 
               className="w-full bg-white border border-[#8696a0]/30 text-[#54656f] py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-gray-50 active:scale-[0.98] transition-all"
             >
-              <span>Me liga mais tarde</span>
+              <span className="text-left">ME LIGA MAIS TARDE</span>
               <Clock className="w-4 h-4" />
             </button>
 
             <button 
               onClick={() => onDecision('exit')} 
-              className="w-full bg-red-50 text-red-600 py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-red-100 active:scale-[0.98] transition-all"
+              className="w-full bg-red-50 border border-red-200 text-red-600 py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-red-100 active:scale-[0.98] transition-all"
             >
-              <span>Bloquear contato</span>
+              <span className="text-left">BLOQUEAR CONTATO</span>
               <XCircle className="w-4 h-4" />
             </button>
           </div>

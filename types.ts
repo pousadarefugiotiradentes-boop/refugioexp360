@@ -23,6 +23,4 @@ export interface Message {
 
 export interface UserProfile {
   name: string;
-  struggle: string;
-  answers: Record<number, string>;
 }
