@@ -127,7 +127,7 @@ const Act5SecretLogin: React.FC<Act5SecretLoginProps> = ({ onComplete }) => {
             <label className="text-[10px] text-gray-500 uppercase tracking-widest font-black">LOGIN</label>
             <div className="relative group">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center space-x-1">
-                <span className="text-amber-500/50 text-sm font-bold">>{` `}</span>
+                <span className="text-amber-500/50 text-sm font-bold">&gt;{` `}</span>
                 <Terminal className="w-4 h-4 text-amber-500/50 group-hover:text-amber-500 transition-colors" />
               </div>
               <input 

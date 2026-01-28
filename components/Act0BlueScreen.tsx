@@ -1,5 +1,4 @@
 
-// Correcting the corrupted React import and removing misplaced type definitions.
 import React, { useEffect, useState, useRef } from 'react';
 import { Monitor, Terminal } from 'lucide-react';
 
@@ -12,14 +11,9 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
   const [percentage, setPercentage] = useState(0);
   const errorAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  /**
-   * LINK DIRETO OPTIMIZADO (Dropbox):
-   * Convertemos 'www.dropbox.com' para 'dl.dropboxusercontent.com'
-   */
   const ERROR_SFX_URL = "https://dl.dropboxusercontent.com/scl/fi/0h55rla37zwcxpuy57jv3/error-sound.mp3?rlkey=n1lmk8iwk3pef8k8blc4ognlg";
 
   useEffect(() => {
-    // Inicializa e toca o som de erro
     const audio = new Audio(ERROR_SFX_URL);
     audio.volume = 0.6;
     errorAudioRef.current = audio;
@@ -37,13 +31,11 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
   }, []);
 
   useEffect(() => {
-    // Lógica para o modo INTRO (Tempo fixo)
     if (mode === 'intro') {
       const timer = setTimeout(onComplete, 5500);
       return () => clearTimeout(timer);
     }
 
-    // Lógica para o modo FINAL (Depende da barra de progresso)
     if (mode === 'final') {
       const interval = setInterval(() => {
         setPercentage(prev => {
@@ -51,7 +43,6 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
             const inc = Math.random() > 0.7 ? Math.floor(Math.random() * 3) + 1 : 1;
             const next = Math.min(100, prev + inc);
             
-            // Quando atingir 100%, aguardamos um breve momento para o usuário ver o estado concluído e chamamos o complete
             if (next === 100) {
               clearInterval(interval);
               setTimeout(onComplete, 1200); 
@@ -60,7 +51,7 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
           }
           return 100;
         });
-      }, 100); // Velocidade ajustada para fluidez
+      }, 100);
 
       return () => clearInterval(interval);
     }
@@ -96,9 +87,9 @@ const Act0BlueScreen: React.FC<Act0BlueScreenProps> = ({ mode = 'intro', onCompl
               </h2>
               
               <div className="space-y-1 text-[10px] md:text-sm text-zinc-400">
-                <p>> Verificando atividade dos pulmões...</p>
-                <p>> Carregando balão de oxigênio</p>
-                <p className="text-[#8EFF8E] animate-pulse">> STATUS: Chamando SAMU...</p>
+                <p>&gt; Verificando atividade dos pulmões...</p>
+                <p>&gt; Carregando balão de oxigênio</p>
+                <p className="text-[#8EFF8E] animate-pulse">&gt; STATUS: Chamando SAMU...</p>
               </div>
             </div>
           </div>
