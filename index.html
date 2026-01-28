@@ -23,6 +23,19 @@
       75% { transform: translateY(-0.8px); }
       100% { transform: translateY(0); }
     }
+    @keyframes vibrate {
+      0% { transform: translate(0,0) rotate(0); }
+      20% { transform: translate(-0.3px, 0.3px) rotate(-0.02deg); }
+      40% { transform: translate(-0.3px, -0.3px) rotate(0.02deg); }
+      60% { transform: translate(0.3px, 0.3px) rotate(-0.02deg); }
+      80% { transform: translate(0.3px, -0.3px) rotate(0.02deg); }
+      100% { transform: translate(0,0) rotate(0); }
+    }
+    @keyframes shake-horizontal {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
     
     .animate-ecg { animation: ecg 1.5s linear infinite; }
     .animate-scan { animation: scan 3s infinite ease-in-out; }
@@ -30,6 +43,8 @@
     .animate-slow-zoom { animation: slow-zoom 20s infinite alternate; }
     .animate-button-pulse { animation: button-pulse 2s infinite ease-in-out; }
     .animate-jitter { animation: jitter 0.15s infinite; }
+    .animate-vibrate { animation: vibrate 0.12s linear infinite; }
+    .animate-shake { animation: shake-horizontal 0.4s cubic-bezier(.36,.07,.19,.97) both; }
   </style>
 <script type="importmap">
 {

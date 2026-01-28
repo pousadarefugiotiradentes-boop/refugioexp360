@@ -50,8 +50,8 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
   useEffect(() => {
     const vibrateAudio = new Audio(VIBRATE_SFX_URL);
     vibrateAudio.loop = true;
-    // Aumentado em 50%: 0.8 * 1.5 = 1.2 -> 1.0 (limitado ao máximo)
-    vibrateAudio.volume = 1.0;
+    vibrateAudio.preload = "auto";
+    vibrateAudio.volume = 1.0; 
     vibrateRef.current = vibrateAudio;
     
     const voiceAudio = new Audio(JOAQUIM_VOICE_URL);
@@ -68,7 +68,9 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
 
     if (status === 'ringing') {
       vibratePlayPromise.current = vibrateAudio.play();
-      vibratePlayPromise.current.catch(() => console.log("Interação necessária para tocar som."));
+      vibratePlayPromise.current.catch(e => {
+        console.warn("Autoplay bloqueado:", e);
+      });
     }
 
     return () => {
@@ -107,7 +109,6 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
   const handleAccept = () => {
     if (status !== 'ringing') return;
     
-    // Reduz volume da trilha principal em 90% (0.07 do original 0.7)
     if (onVolumeChange) onVolumeChange(0.07);
 
     safePause(vibrateRef, vibratePlayPromise);
@@ -126,7 +127,6 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
     }
   };
 
-  // Handlers para gesto de arrastar para cima (Swipe Up)
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartY(e.touches[0].clientY);
   };
@@ -136,7 +136,6 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
     const touchEndY = e.changedTouches[0].clientY;
     const deltaY = touchStartY - touchEndY;
     
-    // Se arrastou para cima mais que 30px, aceita a chamada
     if (deltaY > 30) {
       handleAccept();
     }
@@ -150,7 +149,10 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
   };
 
   return (
-    <div className={`flex-1 flex flex-col bg-[#0b141a] text-white relative overflow-hidden transition-all duration-700 font-sans ${fadeOut ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+    <div className={`flex-1 flex flex-col bg-[#0b141a] text-white relative overflow-hidden transition-all duration-700 font-sans 
+      ${fadeOut ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
+      ${status === 'ringing' ? 'animate-vibrate' : ''}`}>
+      
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-repeat bg-[length:450px_auto]"></div>
 
       <div className="relative z-20 flex flex-col items-center text-center pt-16 px-6">
@@ -219,7 +221,6 @@ const Act3PhoneCall: React.FC<Act3PhoneCallProps> = ({ userProfile, onComplete, 
             </div>
             
             <div className="flex flex-col items-center gap-4 group">
-              {/* Botão Aceitar Otimizado: Suporta toque, clique e swipe up */}
               <button 
                 onClick={handleAccept} 
                 onTouchStart={handleTouchStart}

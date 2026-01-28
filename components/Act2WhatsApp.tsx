@@ -107,6 +107,7 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
   const [showEmoji, setShowEmoji] = useState(false);
   const sequenceStartedRef = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const timersRef = useRef<any[]>([]);
 
   const addTimer = (fn: () => void, delay: number) => {
@@ -120,6 +121,12 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
       id: Date.now() + Math.random(),
       text, sender, isAudio, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }]);
+  };
+
+  const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior, block: 'end' });
+    }
   };
 
   useEffect(() => {
@@ -182,22 +189,29 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
     }
   }, [step, mode]);
 
+  // Efeito de Scroll Robusto
   useEffect(() => {
-    const scrollToBottom = () => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    // Scroll imediato
+    scrollToBottom('auto');
+
+    // Múltiplos timeouts para garantir o scroll durante e após as transições de 500ms
+    const timer1 = setTimeout(() => scrollToBottom('smooth'), 100);
+    const timer2 = setTimeout(() => scrollToBottom('smooth'), 300);
+    const timer3 = setTimeout(() => scrollToBottom('smooth'), 600);
+    
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
     };
-    const timer = setTimeout(scrollToBottom, 150);
-    return () => clearTimeout(timer);
-  }, [messages, isTyping, showFinalCta, showOptions, step]);
+  }, [messages, isTyping, showFinalCta, showOptions, step, showEmoji]);
 
   const handleUserResponse = (text: string) => {
     if (!text.trim()) return;
     setShowOptions(false);
     addMessage(text, 'user');
     
-    // Se o CTA final já está visível ou se estamos no modo após declínio,
-    // qualquer mensagem deve avançar para o login secreto em vez de voltar para o step 10
-    if (showFinalCta || mode === 'after-decline') {
+    if (showFinalCta || mode === 'after-decline' || step >= 100) {
       addTimer(() => {
         onDecision('login');
       }, 1500);
@@ -207,7 +221,7 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
   };
 
   const handleManualSend = () => {
-    if (inputValue.trim()) {
+    if (inputValue.trim() && isUserTurn) {
       handleUserResponse(inputValue);
       setInputValue('');
     }
@@ -232,14 +246,21 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
           setIsTyping(false);
           addMessage(item.text, 'mentor');
           if (index === sequence.length - 1) {
-            addTimer(() => setShowFinalCta(true), 1000);
+            addTimer(() => {
+              setShowFinalCta(true);
+              // Gatilho para transição automática no modo after-decline (Ato 2.1)
+              if (mode === 'after-decline') {
+                addTimer(() => onDecision('login'), 3500);
+              }
+            }, 1000);
           }
         }, 1200);
       }, item.delay);
     });
   };
 
-  const isAnyOptionOpen = showOptions || (step === 14 && !isTyping && mode !== 'after-decline');
+  const isUserTurn = showOptions || (step === 14 && !isTyping && mode !== 'after-decline') || showFinalCta;
+  const isAnyOptionOpen = showOptions || (step === 14 && !isTyping && mode !== 'after-decline') || showFinalCta;
 
   return (
     <div className="flex flex-col h-screen w-full bg-[#E5DDD5] font-sans overflow-hidden text-[#111b21]">
@@ -262,47 +283,56 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
           <MoreVertical className="w-5 h-5" />
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-repeat bg-[length:450px_auto] no-scrollbar">
-        {messages.map((msg) => (
-          <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-            {msg.isAudio ? (
-              <AudioBubble 
-                onPlayStarted={startAudioSequence} 
-                onComplete={() => {
-                  // Se o audio acabar, e for a versão "depois de recusar",
-                  // o fluxo natural continua com as mensagens de login
-                }} 
-                onVolumeChange={onVolumeChange}
-              />
-            ) : (
-              <div className={`max-w-[85%] px-4 py-2 shadow-sm relative text-[14px] leading-tight ${msg.sender === 'user' ? 'bg-[#d9fdd3] rounded-l-lg rounded-br-lg' : 'bg-white rounded-r-lg rounded-bl-lg'}`}>
-                <p className="pr-12 text-[#111b21]">{msg.text}</p>
-                <div className="absolute bottom-1 right-2 flex items-center space-x-1 text-[9px] text-[#667781]">
-                  <span>{msg.timestamp}</span>
-                  {msg.sender === 'user' && <CheckCheck className="w-3.5 h-3.5 text-[#53bdeb]" />}
+      
+      {/* Container de Mensagens com scroll automático */}
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto p-4 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-repeat bg-[length:450px_auto] no-scrollbar relative"
+      >
+        <div className="space-y-3 pb-8">
+          {messages.map((msg) => (
+            <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+              {msg.isAudio ? (
+                <AudioBubble 
+                  onPlayStarted={startAudioSequence} 
+                  onComplete={() => {}} 
+                  onVolumeChange={onVolumeChange}
+                />
+              ) : (
+                <div className={`max-w-[85%] px-4 py-2 shadow-sm relative text-[14px] leading-tight ${msg.sender === 'user' ? 'bg-[#d9fdd3] rounded-l-lg rounded-br-lg' : 'bg-white rounded-r-lg rounded-bl-lg'}`}>
+                  <p className="pr-12 text-[#111b21]">{msg.text}</p>
+                  <div className="absolute bottom-1 right-2 flex items-center space-x-1 text-[9px] text-[#667781]">
+                    <span>{msg.timestamp}</span>
+                    {msg.sender === 'user' && <CheckCheck className="w-3.5 h-3.5 text-[#53bdeb]" />}
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        ))}
-        {isTyping && <div className="bg-white px-4 py-2 rounded-xl text-xs italic text-[#667781] w-fit animate-pulse shadow-sm border border-black/5">digitando...</div>}
-        {showFinalCta && (
-          <div className="flex justify-start animate-in zoom-in slide-in-from-left-4 duration-500 py-2">
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden min-w-[240px] max-w-[85%] border border-black/5">
-              <div className="px-4 py-3 text-[14px] text-[#111b21]">Acesse o sistema aqui:</div>
-              <button 
-                onClick={() => onDecision('login')}
-                className="w-full border-t border-gray-100 py-4 px-4 text-[#00a884] font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-gray-50 active:bg-gray-100 transition-colors uppercase tracking-tight"
-              >
-                <ExternalLink className="w-4 h-4" />
-                ACESSAR SUPER DEEP DARK WEB
-              </button>
+              )}
             </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} className="h-2" />
+          ))}
+          {isTyping && <div className="bg-white px-4 py-2 rounded-xl text-xs italic text-[#667781] w-fit animate-pulse shadow-sm border border-black/5">digitando...</div>}
+          
+          {showFinalCta && (
+            <div className="flex justify-start animate-in zoom-in slide-in-from-left-4 duration-500 py-2">
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden min-w-[240px] max-w-[85%] border border-black/5">
+                <div className="px-4 py-3 text-[14px] text-[#111b21]">Acesse o sistema aqui:</div>
+                <button 
+                  onClick={() => onDecision('login')}
+                  className="w-full border-t border-gray-100 py-4 px-4 text-[#00a884] font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-gray-50 active:bg-gray-100 transition-colors uppercase tracking-tight"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  ACESSAR SUPER DEEP DARK WEB
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {/* Marcador de fim de mensagens com espaçador para evitar sobreposição visual no início do scroll */}
+          <div ref={messagesEndRef} className="h-4" />
+        </div>
       </div>
-      <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isAnyOptionOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'}`}>
+
+      {/* Sugestões de Resposta / Ação Sugerida */}
+      <div className={`transition-all duration-500 ease-in-out overflow-hidden shrink-0 ${isAnyOptionOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="px-4 pb-4 pt-2">
           {showOptions && (
             <div className="bg-white/95 backdrop-blur p-5 rounded-3xl shadow-xl space-y-3 border border-[#00a884]/20 animate-in slide-in-from-bottom-4 duration-500">
@@ -329,7 +359,7 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
           )}
           {step === 14 && !isTyping && mode !== 'after-decline' && (
             <div className="bg-white/95 backdrop-blur p-5 rounded-3xl shadow-xl space-y-3 border border-[#00a884]/20 animate-in slide-in-from-bottom-4 duration-500">
-              <p className="text-[10px] text-[#667781] font-bold uppercase tracking-widest text-center mb-1">Ação Sugerida</p>
+              <p className="text-[10px] text-[#667781] font-bold uppercase tracking-widest text-center mb-1 italic">Ação Sugerida</p>
               <div className="space-y-2">
                 <button onClick={() => onDecision('call')} className="w-full bg-[#00a884] text-white py-4 rounded-2xl font-black uppercase tracking-tight flex justify-between items-center px-6 shadow-lg hover:brightness-110 active:scale-[0.98] transition-all">
                   <span className="text-left">PODE LIGAR, UAI!</span>
@@ -348,17 +378,35 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
           )}
         </div>
       </div>
+
+      {/* Barra de Input fixa no rodapé */}
       <div className="bg-[#F0F2F5] p-2 pb-4 flex items-end space-x-2 relative z-50 shrink-0">
-        <div className="flex-1 bg-white rounded-[26px] flex items-center px-3 min-h-[48px] shadow-sm">
-          <button onClick={() => setShowEmoji(!showEmoji)} className="focus:outline-none"><Smile className={`w-6 h-6 ${showEmoji ? 'text-[#00a884]' : 'text-[#54656f]'}`} /></button>
-          <input type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleManualSend()} placeholder="Digite sua mensagem" className="flex-1 px-3 py-2 text-sm outline-none bg-transparent text-[#111b21]" />
-          <Paperclip className="w-5 h-5 text-[#54656f] -rotate-45" /><Camera className="w-5 h-5 text-[#54656f]" />
+        <div className={`flex-1 bg-white rounded-[26px] flex items-center px-3 min-h-[48px] shadow-sm transition-opacity ${!isUserTurn ? 'opacity-60 cursor-not-allowed' : ''}`}>
+          <button onClick={() => isUserTurn && setShowEmoji(!showEmoji)} className={`focus:outline-none ${!isUserTurn ? 'cursor-not-allowed' : ''}`}>
+            <Smile className={`w-6 h-6 ${showEmoji ? 'text-[#00a884]' : 'text-[#54656f]'}`} />
+          </button>
+          <input 
+            type="text" 
+            value={inputValue} 
+            onChange={e => setInputValue(e.target.value)} 
+            onKeyDown={e => e.key === 'Enter' && handleManualSend()} 
+            disabled={!isUserTurn}
+            placeholder={isUserTurn ? "Digite sua mensagem" : "Aguarde o Joaquim..."} 
+            className="flex-1 px-3 py-2 text-sm outline-none bg-transparent text-[#111b21] disabled:placeholder-[#8696a0]" 
+          />
+          <Paperclip className="w-5 h-5 text-[#54656f] -rotate-45" />
+          <Camera className="w-5 h-5 text-[#54656f]" />
         </div>
-        <button onClick={inputValue.trim() ? handleManualSend : undefined} className="bg-[#00a884] w-12 h-12 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform">
+        <button 
+          onClick={inputValue.trim() && isUserTurn ? handleManualSend : undefined} 
+          disabled={!isUserTurn && !inputValue.trim()}
+          className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all ${!isUserTurn && !inputValue.trim() ? 'bg-gray-300' : 'bg-[#00a884]'}`}
+        >
           {inputValue.trim() ? <Send className="w-5 h-5 text-white" /> : <Mic className="w-5 h-5 text-white" />}
         </button>
       </div>
-      {showEmoji && (
+      
+      {showEmoji && isUserTurn && (
         <div className="bg-white p-4 grid grid-cols-6 gap-2 border-t animate-in slide-in-from-bottom-2 shrink-0">
           {['🙂', '🙃', '😅', '🤔', '😴', '😱'].map(emoji => (
             <button key={emoji} onClick={() => { setInputValue(prev => prev + emoji); setShowEmoji(false); }} className="text-2xl hover:bg-gray-100 p-2 rounded">{emoji}</button>

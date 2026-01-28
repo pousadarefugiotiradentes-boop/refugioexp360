@@ -10,15 +10,17 @@ import {
   Eye, 
   TreePine, 
   ShieldAlert,
-  ChevronDown
+  ChevronDown,
+  RefreshCw
 } from 'lucide-react';
 
 interface Act4OfferProps {
   userProfile: UserProfile;
   onAbort?: () => void;
+  onRestart?: () => void;
 }
 
-const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort }) => {
+const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort, onRestart }) => {
   const BOOKING_URL = "https://api.whatsapp.com/send?phone=5532998135902&text=Oi%20Joaquim%2C%20gostaria%20de%20ativar%20meu%20plano%20de%20fuga%21";
   const VIRTUAL_TOUR_URL = "https://www.google.com/maps/embed?pb=!4v1769471411322!6m8!1m7!1sCAoSHENJQUJJaERwb19wdS1DUVpLN2pRY1g1QW81ZkE.!2m2!1d-21.10843422899292!2d-44.16852750791136!3f353.93514061676234!4f-0.5637616834684138!5f0.7820865974627469";
   
@@ -56,7 +58,6 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort }) => {
 
         {/* Scroll Indicator Arrow */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2 opacity-80 hover:opacity-100 transition-opacity animate-in fade-in duration-1000 delay-500">
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-500/60 mb-2">Role para descobrir</span>
           <div className="animate-bounce">
             <ChevronDown className="w-10 h-10 text-amber-500 stroke-[3px]" />
           </div>
@@ -105,7 +106,7 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort }) => {
       </section>
 
       {/* Tour Virtual Section */}
-      <section className="py-24 md:py-32 px-6 bg-black text-center space-y-16">
+      <section className="py-24 md:py-32 px-4 md:px-6 bg-black text-center space-y-16">
         <div className="space-y-6">
           <div className="flex items-center justify-center gap-4 text-amber-500">
             <Eye className="w-6 h-6 animate-pulse" /> 
@@ -115,10 +116,12 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort }) => {
             QUE TAL CONHECER O <br/> <span className="text-amber-500">REFÚGIO</span> DE PERTO?
           </h2>
           <p className="text-zinc-400 text-xl md:text-2xl max-w-2xl mx-auto font-light">
-            Que tal conhecer o Refúgio mais de perto?
+            Sinta a energia do nosso espaço agora mesmo.
           </p>
         </div>
-        <div className="max-w-5xl mx-auto aspect-video md:min-h-[600px] rounded-[3rem] overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(245,158,11,0.1)] relative">
+        
+        {/* Ajuste de Tamanho do Street View: Quase tela cheia */}
+        <div className="w-full max-w-[95vw] mx-auto h-[65vh] md:h-[75vh] rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(245,158,11,0.15)] relative">
           <iframe 
             src={VIRTUAL_TOUR_URL} 
             width="100%" 
@@ -126,9 +129,11 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort }) => {
             style={{ border: 0 }} 
             allowFullScreen={true} 
             loading="lazy"
+            title="Google Street View - Pousada Refúgio Tiradentes"
           ></iframe>
         </div>
-        <p className="text-xs md:text-sm text-zinc-500 font-bold uppercase tracking-[0.2em] max-w-2xl mx-auto leading-relaxed">
+        
+        <p className="text-xs md:text-sm text-zinc-500 font-bold uppercase tracking-[0.2em] max-w-2xl mx-auto leading-relaxed px-4">
           Clique nas setas para caminhar pelo Refúgio e conhecer nossos quartos! Sinta-se em casa!
         </p>
       </section>
@@ -148,12 +153,23 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort }) => {
           >
             CONFIRMAR PLANO DE FUGA
           </button>
-          <button 
-            onClick={onAbort} 
-            className="w-full bg-transparent border-2 border-red-900/30 text-red-600/50 py-5 rounded-[2rem] font-black text-[10px] uppercase tracking-[0.3em] hover:text-red-600 hover:border-red-600 transition-all active:scale-95 flex items-center justify-center gap-3"
-          >
-            <ShieldAlert className="w-4 h-4" /> ABORTAR MISSÃO
-          </button>
+          
+          <div className="space-y-4 pt-4">
+            <button 
+              onClick={onAbort} 
+              className="w-full bg-transparent border-2 border-red-900/30 text-red-600/50 py-5 rounded-[2rem] font-black text-[10px] uppercase tracking-[0.3em] hover:text-red-600 hover:border-red-600 transition-all active:scale-95 flex items-center justify-center gap-3"
+            >
+              <ShieldAlert className="w-4 h-4" /> ABORTAR MISSÃO
+            </button>
+            
+            <button 
+              onClick={onRestart} 
+              className="w-full bg-transparent text-zinc-600 py-3 rounded-[2rem] font-black text-[9px] uppercase tracking-[0.4em] hover:text-amber-500 transition-all active:scale-95 flex items-center justify-center gap-2 group"
+            >
+              <RefreshCw className="w-3 h-3 group-hover:rotate-180 transition-transform duration-700" /> 
+              REFAZER DIAGNÓSTICO
+            </button>
+          </div>
         </div>
       </section>
 

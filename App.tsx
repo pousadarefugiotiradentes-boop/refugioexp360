@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FunnelStep, UserProfile } from './types';
 import DevIndex from './components/DevIndex';
@@ -15,7 +14,6 @@ import { HERO_IMAGE_URL, LOGO_URL } from './constants';
 import { Shield, Power, Volume2, VolumeX, LayoutGrid } from 'lucide-react';
 
 const App: React.FC = () => {
-  // Alterado para FunnelStep.START_SCREEN para ocultar o DevIndex no deploy
   const [step, setStep] = useState<FunnelStep>(FunnelStep.START_SCREEN);
   const [blueScreenMode, setBlueScreenMode] = useState<'intro' | 'final'>('intro');
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -25,7 +23,6 @@ const App: React.FC = () => {
     name: 'Visitante'
   });
 
-  // Controle para exibir o DevIndex (pode ser ativado via Console se necessário)
   const [showDevTools, setShowDevTools] = useState(false);
 
   const mainAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -33,11 +30,11 @@ const App: React.FC = () => {
 
   const AUDIO_SOURCE = "https://dl.dropboxusercontent.com/scl/fi/a712ue0yjxqwio6v9b9t5/trilha-exp-360-refugio-TESTE-5-PREMASTERED.mp3?rlkey=hld15nfh2qyjd8virxn14dzmd";
   const JOAQUIM_VOICE_URL = "https://dl.dropboxusercontent.com/scl/fi/syvbwm8r21kdctghvlkmv/joaquim-chamando.mp3?rlkey=34rdytesptpapd79v128gmtcw";
+  const VIBRATE_SFX_URL = "https://dl.dropboxusercontent.com/scl/fi/ov2kevkt11lokxvnbs44g/celular-vibrando.mp3?rlkey=jxwpvwzv1tszkhst44pt3fyvl";
   const JOAQUIM_AVATAR = "https://i.postimg.cc/1XhTqCyf/joaquim-perfil-2.png";
   const DEFAULT_VOLUME = 0.7;
 
   useEffect(() => {
-    // Expondo função global para reativar o Mission Control se necessário durante testes
     (window as any).enableMissionControl = () => setShowDevTools(true);
 
     const preloadImages = [HERO_IMAGE_URL, LOGO_URL, JOAQUIM_AVATAR];
@@ -49,6 +46,10 @@ const App: React.FC = () => {
     const voicePreload = new Audio();
     voicePreload.src = JOAQUIM_VOICE_URL;
     voicePreload.preload = "auto";
+
+    const vibratePreload = new Audio();
+    vibratePreload.src = VIBRATE_SFX_URL;
+    vibratePreload.preload = "auto";
 
     const audio = new Audio();
     audio.src = AUDIO_SOURCE;
@@ -220,9 +221,8 @@ const App: React.FC = () => {
       {step === FunnelStep.PHONE_CALL && <Act3PhoneCall userProfile={userProfile} onComplete={handleCallComplete} onDecline={handleCallDecline} onVolumeChange={(vol) => fadeVolume(vol, 1200)} />}
       {step === FunnelStep.SECRET_LOGIN && <Act5SecretLogin onComplete={handleSecretLoginComplete} />}
       {step === FunnelStep.AUTODESTRUCT && <Act6Autodestruct onComplete={() => navigateTo(FunnelStep.OFFER)} />}
-      {step === FunnelStep.OFFER && <Act4Offer userProfile={userProfile} onAbort={() => navigateTo(FunnelStep.AUTODESTRUCT)} />}
+      {step === FunnelStep.OFFER && <Act4Offer userProfile={userProfile} onAbort={() => navigateTo(FunnelStep.AUTODESTRUCT)} onRestart={() => navigateTo(FunnelStep.START_SCREEN)} />}
 
-      {/* Botão de Mission Control agora oculto por padrão no deploy */}
       {showDevTools && (
         <button onClick={() => setStep(FunnelStep.INDEX)} className="fixed bottom-4 right-4 z-[9999] bg-white/5 text-white/20 p-3 rounded-full border border-white/5">
           <LayoutGrid className="w-5 h-5" />

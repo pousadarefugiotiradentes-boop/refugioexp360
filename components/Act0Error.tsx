@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ShieldAlert, Power, AlertTriangle, Heart } from 'lucide-react';
 
@@ -9,8 +8,15 @@ interface Act0ErrorProps {
 const Act0Error: React.FC<Act0ErrorProps> = ({ onComplete }) => {
   const [accepted, setAccepted] = useState(false);
   const [isShuttingDown, setIsShuttingDown] = useState(false);
+  const [shouldShake, setShouldShake] = useState(false);
 
   const handleStartProcess = () => {
+    if (!accepted) {
+      setShouldShake(true);
+      setTimeout(() => setShouldShake(false), 500);
+      return;
+    }
+    
     setIsShuttingDown(true);
     setTimeout(() => onComplete(), 1500);
   };
@@ -61,9 +67,10 @@ const Act0Error: React.FC<Act0ErrorProps> = ({ onComplete }) => {
             <div className="space-y-4">
               <label 
                 className={`flex items-start space-x-[12px] cursor-pointer group p-5 pl-[20px] bg-zinc-900/60 border rounded-2xl transition-all duration-500
+                  ${shouldShake ? 'animate-shake border-red-500' : ''}
                   ${accepted 
                     ? 'border-[#8EFF8E]/50 bg-zinc-800/80 shadow-[0_0_20px_rgba(142,255,142,0.1)]' 
-                    : 'border-red-900/40 animate-pulse-red'
+                    : !shouldShake ? 'border-red-900/40 animate-pulse-red' : ''
                   }
                 `}
               >
@@ -88,12 +95,11 @@ const Act0Error: React.FC<Act0ErrorProps> = ({ onComplete }) => {
               </label>
 
               <button 
-                disabled={!accepted}
                 onClick={handleStartProcess}
                 className={`w-full py-[16px] px-[24px] pl-[20px] rounded-2xl font-black text-sm transition-all flex items-center justify-start space-x-[12px] uppercase tracking-[0.2em] italic
                   ${accepted 
                     ? 'bg-zinc-800 border-2 border-[#8EFF8E] text-white shadow-[0_0_40px_rgba(142,255,142,0.2)] hover:scale-[1.02] active:scale-[0.98]' 
-                    : 'bg-zinc-900/90 border border-zinc-700 text-zinc-500 cursor-not-allowed opacity-90'
+                    : 'bg-zinc-900/90 border border-zinc-700 text-zinc-500 hover:border-red-600/50 hover:text-zinc-400'
                   }`}
               >
                 <Power className="w-6 h-6 shrink-0" />
