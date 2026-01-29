@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface Act0BreathingProps {
   onComplete: () => void;
@@ -30,6 +29,10 @@ const Act0Breathing: React.FC<Act0BreathingProps> = ({ onComplete }) => {
   const [warningStep, setWarningStep] = useState(0);
   const [cycle, setCycle] = useState(0);
   const [phase, setPhase] = useState<'inhale' | 'exhale'>('inhale');
+  
+  // Refs para gerenciar timers e evitar execuções após o componente ser desmontado ou pulado
+  const cycleTimerRef = useRef<any>(null);
+  const isTransitioningRef = useRef(false);
 
   const warnings = [
     "REBOOT_PULMONAR",
@@ -43,50 +46,86 @@ const Act0Breathing: React.FC<Act0BreathingProps> = ({ onComplete }) => {
     "Tem certeza que está respirando?"
   ];
 
+  const handleComplete = () => {
+    if (isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
+    
+    // Limpa qualquer timer ativo antes de prosseguir
+    if (cycleTimerRef.current) clearTimeout(cycleTimerRef.current);
+    onComplete();
+  };
+
   useEffect(() => {
     if (showWarning) {
+      // Ajustado de 1200ms para 1850ms (+650ms por passo, totalizando aprox +2s no ciclo de 3 passos)
       const timer = setInterval(() => {
         setWarningStep(prev => {
           if (prev < warnings.length - 1) return prev + 1;
           clearInterval(timer);
-          setTimeout(() => setShowWarning(false), 1500);
+          // Aumentado levemente o delay final antes da transição
+          cycleTimerRef.current = setTimeout(() => setShowWarning(false), 1550);
           return prev;
         });
-      }, 1200);
-      return () => clearInterval(timer);
+      }, 1850);
+      return () => {
+        clearInterval(timer);
+        if (cycleTimerRef.current) clearTimeout(cycleTimerRef.current);
+      };
     }
   }, [showWarning]);
 
   useEffect(() => {
-    if (showWarning) return;
+    if (showWarning || isTransitioningRef.current) return;
 
     const totalCycles = 3; 
     const runCycle = (current: number) => {
+      if (isTransitioningRef.current) return;
+
       if (current >= totalCycles) {
-        setTimeout(onComplete, 1500);
+        cycleTimerRef.current = setTimeout(handleComplete, 1500);
         return;
       }
+
       setPhase('inhale');
-      setTimeout(() => {
+      cycleTimerRef.current = setTimeout(() => {
+        if (isTransitioningRef.current) return;
         setPhase('exhale');
-        setTimeout(() => {
+        cycleTimerRef.current = setTimeout(() => {
+          if (isTransitioningRef.current) return;
           setCycle(current + 1);
           runCycle(current + 1);
         }, 2500);
       }, 2500);
     };
+
     runCycle(0);
-  }, [showWarning, onComplete]);
+
+    return () => {
+      if (cycleTimerRef.current) clearTimeout(cycleTimerRef.current);
+    };
+  }, [showWarning]);
 
   if (showWarning) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-black h-screen overflow-hidden p-6">
-        <div className="text-center space-y-8 max-w-sm mx-auto">
+      <div className={`flex-1 flex flex-col items-center justify-center bg-black h-screen overflow-hidden p-6 transition-colors duration-300 ${warningStep === 1 ? 'bg-red-950/20' : ''}`}>
+        {/* Efeito de vignette vermelho dramático no passo da pergunta */}
+        {warningStep === 1 && (
+          <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_150px_rgba(255,0,0,0.3)] animate-pulse z-0"></div>
+        )}
+        
+        <div className="text-center space-y-8 max-w-sm mx-auto relative z-10">
           <div className="space-y-4">
-            <h2 className={`text-3xl md:text-6xl font-black italic tracking-tighter uppercase leading-[0.9] transition-all duration-700 ${warningStep === 2 ? 'text-[#8EFF8E] scale-110 drop-shadow-[0_0_15px_rgba(142,255,142,0.5)]' : 'text-red-600'}`}>
+            <h2 className={`text-3xl md:text-6xl font-black italic tracking-tighter uppercase leading-[0.9] transition-all duration-700 
+              ${warningStep === 1 ? 'text-red-500 scale-125 animate-glitch drop-shadow-[0_0_30px_rgba(255,0,0,0.6)]' : ''}
+              ${warningStep === 2 ? 'text-[#8EFF8E] scale-110 drop-shadow-[0_0_15px_rgba(142,255,142,0.5)]' : 'text-red-600'}
+            `}>
               {warnings[warningStep]}
             </h2>
-            <div className={`h-1 mx-auto rounded-full transition-all duration-700 ${warningStep === 2 ? 'bg-[#8EFF8E] w-32 shadow-[0_0_20px_#8EFF8E]' : 'bg-red-900 w-16'} animate-pulse`}></div>
+            <div className={`h-1 mx-auto rounded-full transition-all duration-700 
+              ${warningStep === 1 ? 'bg-red-600 w-48 shadow-[0_0_20px_#ef4444]' : ''}
+              ${warningStep === 2 ? 'bg-[#8EFF8E] w-32 shadow-[0_0_20px_#8EFF8E]' : 'bg-red-900 w-16'} 
+              animate-pulse
+            `}></div>
           </div>
           <p className="text-[10px] text-zinc-600 font-mono tracking-[0.3em] uppercase">Iniciando protocolo de emergência...</p>
         </div>
@@ -138,7 +177,7 @@ const Act0Breathing: React.FC<Act0BreathingProps> = ({ onComplete }) => {
             <div key={i} className={`w-2.5 h-2.5 rounded-full transition-all duration-700 ${i < cycle ? 'bg-[#8EFF8E] scale-125 shadow-[0_0_12px_#8EFF8E]' : 'bg-zinc-800'}`} />
           ))}
         </div>
-        <button onClick={onComplete} className="text-[#8EFF8E]/40 text-[9px] font-black uppercase tracking-[0.4em] italic hover:text-[#8EFF8E] transition-colors py-2 px-4 border border-transparent active:border-[#8EFF8E]/20 rounded-full">
+        <button onClick={handleComplete} className="text-[#8EFF8E]/40 text-[9px] font-black uppercase tracking-[0.4em] italic hover:text-[#8EFF8E] transition-colors py-2 px-4 border border-transparent active:border-[#8EFF8E]/20 rounded-full">
           Pular Exercício
         </button>
       </div>

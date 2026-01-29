@@ -11,7 +11,8 @@ import {
   TreePine, 
   ShieldAlert,
   ChevronDown,
-  RefreshCw
+  RefreshCw,
+  Zap
 } from 'lucide-react';
 
 interface Act4OfferProps {
@@ -65,7 +66,7 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort, onRestart }
       </section>
 
       {/* Plano de Fuga Section */}
-      <section className="bg-zinc-950 py-24 md:py-32 px-6">
+      <section className="bg-zinc-950 pt-24 pb-12 md:pt-32 md:pb-16 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-24 items-center">
           <div className="space-y-12">
             <div className="space-y-6">
@@ -105,6 +106,20 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort, onRestart }
         </div>
       </section>
 
+      {/* Middle CTA Section - Novo Botão solicitado */}
+      <section className="bg-zinc-950 pb-24 md:pb-32 px-6 flex justify-center">
+        <div className="max-w-4xl w-full">
+          <button 
+            onClick={handleBooking}
+            className="w-full bg-amber-500 hover:bg-amber-400 text-black px-10 py-6 md:py-8 rounded-[2.5rem] font-black text-2xl md:text-4xl uppercase italic tracking-tighter transition-all shadow-[0_20px_50px_rgba(245,158,11,0.2)] flex items-center justify-center gap-6 group active:scale-[0.98]"
+          >
+            <Zap className="w-8 h-8 md:w-10 md:h-10 fill-current animate-pulse" />
+            ATIVAR PLANO DE FUGA
+            <Zap className="w-8 h-8 md:w-10 md:h-10 fill-current animate-pulse" />
+          </button>
+        </div>
+      </section>
+
       {/* Tour Virtual Section */}
       <section className="py-24 md:py-32 px-4 md:px-6 bg-black text-center space-y-16">
         <div className="space-y-6">
@@ -140,8 +155,10 @@ const Act4Offer: React.FC<Act4OfferProps> = ({ userProfile, onAbort, onRestart }
 
       {/* CTA Final Section */}
       <section className="py-32 md:py-48 px-6 bg-[#050505] text-center space-y-12 border-t border-white/5">
-        <h3 className="text-5xl md:text-[7rem] font-black italic uppercase tracking-tighter text-white">
-          ESTÁ ESPERANDO <span className="text-amber-500 underline decoration-white/10">O QUÊ?</span>
+        <h3 className="text-5xl md:text-[7rem] font-black italic uppercase tracking-tighter text-white leading-[0.85]">
+          ESTÁ<br/>
+          ESPERANDO<br/>
+          <span className="text-amber-500 underline decoration-white/10">O QUÊ?</span>
         </h3>
         <p className="text-zinc-400 text-xl md:text-3xl font-medium uppercase tracking-widest">
           A sua única missão aqui? Descansar!

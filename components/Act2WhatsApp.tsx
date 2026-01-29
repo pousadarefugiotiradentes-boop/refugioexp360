@@ -215,7 +215,13 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
       addTimer(() => {
         onDecision('login');
       }, 1500);
+    } else if (step === 14) {
+      // HAPPY PATH: Se o usuário digitar algo quando perguntado se pode ligar, vai para a chamada
+      addTimer(() => {
+        onDecision('call');
+      }, 800);
     } else {
+      // Se estiver no início (step 3), vai para o step 10
       setStep(10);
     }
   };
@@ -350,8 +356,8 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
                   <span className="text-left">TÔ NO MEU LIMITE</span>
                   <AlertTriangle className="w-4 h-4" />
                 </button>
-                <button onClick={() => handleUserResponse("Nada é tão ruim que não possa piorar!")} className="w-full bg-red-50 border border-red-200 text-red-600 py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-red-100 active:scale-[0.98] transition-all">
-                  <span className="text-left">PODE PIORAR...</span>
+                <button onClick={() => handleUserResponse("Pior que tá não fica...")} className="w-full bg-red-50 border border-red-200 text-red-600 py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-red-100 active:scale-[0.98] transition-all">
+                  <span className="text-left">PIOR QUE TÁ NÃO FICA</span>
                   <Skull className="w-4 h-4" />
                 </button>
               </div>
