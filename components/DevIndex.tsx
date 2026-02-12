@@ -16,7 +16,10 @@ import {
   Volume2,
   Headphones,
   Settings,
-  ShieldCheck
+  ShieldCheck,
+  Instagram,
+  ClipboardCheck,
+  Terminal
 } from 'lucide-react';
 
 interface DevIndexProps {
@@ -28,87 +31,109 @@ const DevIndex: React.FC<DevIndexProps> = ({ onSelectStep, onStartNormalFlow }) 
   const steps = [
     { 
       id: FunnelStep.START_SCREEN, 
-      name: 'Act 0: Sexto Sentido', 
-      desc: 'Tela de introdução e ativação sonora',
+      name: '0.0 Intro Experience', 
+      desc: 'Tela preta: Iniciar Diagnóstico',
       icon: Volume2, 
       color: 'text-amber-400' 
     },
     { 
       id: FunnelStep.BIOMETRIC_ANALYSIS, 
-      name: 'Act 0: Biometria', 
-      desc: 'Simulação de leitura de BPM e Stress',
+      name: '0.1 Biometria', 
+      desc: 'Simulação de leitura de ECG',
       icon: Fingerprint, 
       color: 'text-red-500' 
     },
     { 
       id: FunnelStep.ERROR_SCREEN, 
-      name: 'Act 0: Tela de Erro', 
-      desc: 'Critical Overload e Termos de Uso',
+      name: '0.2 Critical Overload', 
+      desc: 'Tela de erro e aceitação de termos',
       icon: AlertCircle, 
       color: 'text-orange-500' 
     },
     { 
       id: FunnelStep.BLUE_SCREEN, 
-      name: 'Act 0: Blue Screen', 
-      desc: 'Simulação de falha de sistema (Intro/Final)',
-      icon: Monitor, 
+      name: '0.3 BSOD Intro', 
+      mode: 'blue-intro',
+      desc: 'Terminal de comandos travando',
+      icon: Terminal, 
       color: 'text-blue-500' 
     },
     { 
+      id: FunnelStep.INSTAGRAM_SCROLL, 
+      name: '0.4 Instagram Scroll', 
+      desc: 'Sobrecarga de rede social e exclusão',
+      icon: Instagram, 
+      color: 'text-fuchsia-500' 
+    },
+    { 
+      id: FunnelStep.BLUE_SCREEN, 
+      name: '0.5 BSOD Final', 
+      mode: 'blue-final',
+      desc: 'Tela Azul da Morte Windows',
+      icon: Monitor, 
+      color: 'text-blue-700' 
+    },
+    { 
       id: FunnelStep.BREATHING, 
-      name: 'Act 0: Respiração', 
-      desc: 'Protocolo de reinicialização pulmonar',
+      name: '0.6 Respiração', 
+      desc: 'Protocolo de reinicialização zen',
       icon: Wind, 
       color: 'text-[#8EFF8E]' 
     },
     { 
       id: FunnelStep.WHATSAPP, 
-      name: 'Act 2: WhatsApp (Normal)', 
-      desc: 'Fluxo inicial de mensagens do Joaquim',
+      name: '2.0 WhatsApp Chat', 
+      desc: 'Conversa inicial com Joaquim',
       icon: MessageSquare, 
       color: 'text-[#00a884]' 
     },
     { 
-      id: FunnelStep.WHATSAPP, 
-      name: 'Act 2.1: WhatsApp (Áudio)', 
-      mode: 'after-decline',
-      desc: 'Fluxo de áudio após recusar chamada',
-      icon: Headphones, 
-      color: 'text-emerald-400' 
-    },
-    { 
       id: FunnelStep.PHONE_CALL, 
-      name: 'Act 3: Chamada', 
-      desc: 'Interface de ligação simulada (Voz Joaquim)',
+      name: '3.0 Phone Call', 
+      desc: 'Ligação recebida (Voz Joaquim)',
       icon: Phone, 
       color: 'text-green-500' 
     },
     { 
+      id: FunnelStep.WHATSAPP, 
+      name: '2.1 WhatsApp Audio', 
+      mode: 'after-decline',
+      desc: 'Áudio enviado após recusar chamada',
+      icon: Headphones, 
+      color: 'text-emerald-400' 
+    },
+    { 
       id: FunnelStep.SECRET_LOGIN, 
-      name: 'Act 5: Login Secreto', 
-      desc: 'Acesso ao Foocking.com (Deep Web)',
+      name: '5.0 Login Secreto', 
+      desc: 'Terminal de acesso (SUPERADMIN)',
       icon: Lock, 
       color: 'text-amber-500' 
     },
     { 
+      id: FunnelStep.STRESS_QUIZ, 
+      name: 'STRESS DETECTOR 2.0', 
+      desc: 'Quiz ácido e Receituário Médico',
+      icon: ClipboardCheck, 
+      color: 'text-red-600' 
+    },
+    { 
       id: FunnelStep.OFFER, 
-      name: 'Act 4: Oferta Final', 
-      desc: 'Landing Page imersiva e Tour Virtual',
+      name: '4.0 Oferta Final', 
+      desc: 'Landing Page e Tour Virtual',
       icon: ShoppingBag, 
       color: 'text-amber-600' 
     },
     { 
       id: FunnelStep.AUTODESTRUCT, 
-      name: 'Act 6: Auto-destruição', 
-      desc: 'Bloqueio de contato e wipe de dados',
+      name: '6.0 Auto-destruição', 
+      desc: 'Wipe de dados e encerramento',
       icon: Trash2, 
-      color: 'text-red-700' 
+      color: 'text-red-900' 
     },
   ];
 
   return (
     <div className="min-h-screen bg-[#050505] text-zinc-400 p-6 md:p-12 font-mono relative overflow-x-hidden">
-      {/* Background Decorativo Tech */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/grid-me.png')]"></div>
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500/0 via-amber-500/50 to-amber-500/0"></div>
 
@@ -122,7 +147,7 @@ const DevIndex: React.FC<DevIndexProps> = ({ onSelectStep, onStartNormalFlow }) 
               <span className="text-[10px] font-black tracking-[0.4em] uppercase">Ambiente de Desenvolvimento Ativo</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter uppercase leading-none">
-              MISSION <span className="text-amber-500">CONTROL</span> <span className="text-zinc-700">V2.1</span>
+              MISSION <span className="text-amber-500">CONTROL</span> <span className="text-zinc-700">V2.5</span>
             </h1>
             <p className="text-zinc-600 text-[10px] mt-4 uppercase tracking-widest font-bold">Gerenciamento de Atos e Fluxos Narrativos</p>
           </div>
@@ -161,7 +186,7 @@ const DevIndex: React.FC<DevIndexProps> = ({ onSelectStep, onStartNormalFlow }) 
                       {step.name}
                     </h3>
                     {step.mode && (
-                      <span className="text-[8px] bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded font-bold border border-emerald-500/20">
+                      <span className="text-[8px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded font-bold border border-amber-500/20">
                         {step.mode}
                       </span>
                     )}

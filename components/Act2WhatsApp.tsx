@@ -73,19 +73,19 @@ const AudioBubble = ({
   };
 
   return (
-    <div className="bg-white rounded-r-lg rounded-bl-lg p-3 shadow-sm flex items-center space-x-3 w-fit max-w-[85%] animate-in fade-in slide-in-from-left-2 text-[#111b21] mb-2">
+    <div className="bg-white rounded-r-2xl rounded-bl-2xl p-3 md:p-4 shadow-sm flex items-center space-x-4 w-fit max-w-[90%] animate-in fade-in slide-in-from-left-2 text-[#111b21] mb-3">
       <div className="relative shrink-0">
-        <img src="https://i.postimg.cc/1XhTqCyf/joaquim-perfil-2.png" className="w-10 h-10 rounded-full object-cover" alt="Joaquim" />
-        <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5"><Mic className="w-3 h-3 text-[#00a884]" /></div>
+        <img src="https://i.postimg.cc/1XhTqCyf/joaquim-perfil-2.png" className="w-10 h-10 md:w-14 md:h-14 rounded-full object-cover" alt="Joaquim" />
+        <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm"><Mic className="w-3 h-3 md:w-4 md:h-4 text-[#00a884]" /></div>
       </div>
-      <button onClick={togglePlay} className="text-[#54656f] shrink-0 outline-none">
-        {isPlaying ? <Pause className="fill-current w-6 h-6" /> : <Play className="fill-current w-6 h-6" />}
+      <button onClick={togglePlay} className="text-[#54656f] shrink-0 outline-none hover:scale-110 transition-transform">
+        {isPlaying ? <Pause className="fill-current w-7 h-7 md:w-9 md:h-9" /> : <Play className="fill-current w-7 h-7 md:w-9 md:h-9" />}
       </button>
-      <div className="flex-1 space-y-1 min-w-[140px]">
-        <div className="h-1 bg-gray-100 rounded-full overflow-hidden w-32 md:w-48 relative">
+      <div className="flex-1 space-y-2 min-w-[140px] md:min-w-[200px]">
+        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden w-full relative">
           <div className="absolute inset-0 bg-[#00a884] transition-all" style={{ width: `${progress}%` }}></div>
         </div>
-        <div className="flex justify-between text-[9px] text-[#667781]">
+        <div className="flex justify-between text-[10px] md:text-xs text-[#667781] font-medium">
           <span>0:53</span>
           <div className="flex items-center space-x-1">
             <span>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -131,9 +131,7 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
 
   useEffect(() => {
     setIsOnline(true);
-    if (mode === 'after-decline') {
-      setStep(100); 
-    }
+    if (mode === 'after-decline') setStep(100); 
     return () => timersRef.current.forEach(clearTimeout);
   }, [mode]);
 
@@ -165,7 +163,7 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
       addTimer(() => { 
         setIsTyping(false); 
         addMessage(`Preciso de te contar sobre uns segredos que descobri em Tiradentes...`, 'mentor'); 
-        setStep(11); 
+          setStep(11); 
       }, 2000);
     } else if (step === 11 && mode !== 'after-decline') {
       setIsTyping(true);
@@ -181,47 +179,26 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
         addMessage(`Não pode atender agora, né? Entendo... Então, vou te mandar um audio, quando puder escuta!`, 'mentor');
         addTimer(() => {
           addMessage('', 'mentor', true);
-          addTimer(() => {
-            if (!sequenceStartedRef.current) startAudioSequence();
-          }, 5000);
         }, 1000);
       }, 2000);
     }
   }, [step, mode]);
 
-  // Efeito de Scroll Robusto
   useEffect(() => {
-    // Scroll imediato
     scrollToBottom('auto');
-
-    // Múltiplos timeouts para garantir o scroll durante e após as transições de 500ms
-    const timer1 = setTimeout(() => scrollToBottom('smooth'), 100);
-    const timer2 = setTimeout(() => scrollToBottom('smooth'), 300);
-    const timer3 = setTimeout(() => scrollToBottom('smooth'), 600);
-    
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-    };
+    const timer = setTimeout(() => scrollToBottom('smooth'), 100);
+    return () => clearTimeout(timer);
   }, [messages, isTyping, showFinalCta, showOptions, step, showEmoji]);
 
   const handleUserResponse = (text: string) => {
     if (!text.trim()) return;
     setShowOptions(false);
     addMessage(text, 'user');
-    
     if (showFinalCta || mode === 'after-decline' || step >= 100) {
-      addTimer(() => {
-        onDecision('login');
-      }, 1500);
+      addTimer(() => onDecision('login'), 1500);
     } else if (step === 14) {
-      // HAPPY PATH: Se o usuário digitar algo quando perguntado se pode ligar, vai para a chamada
-      addTimer(() => {
-        onDecision('call');
-      }, 800);
+      addTimer(() => onDecision('call'), 800);
     } else {
-      // Se estiver no início (step 3), vai para o step 10
       setStep(10);
     }
   };
@@ -236,7 +213,6 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
   const startAudioSequence = () => {
     if (sequenceStartedRef.current) return;
     sequenceStartedRef.current = true;
-
     const sequence = [
       { text: "Anota ai o login e a senha pra você acessar o sistema:", delay: 2000 },
       { text: "o login é SUPERADMIN", delay: 5000 },
@@ -244,7 +220,6 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
       { text: "Não compartilha com ninguém, eim! Fica só entre nós!", delay: 11000 },
       { text: "Acessa logo, pode sair do ar a qualquer momento!", delay: 14000 }
     ];
-
     sequence.forEach((item, index) => {
       addTimer(() => {
         setIsTyping(true);
@@ -254,10 +229,6 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
           if (index === sequence.length - 1) {
             addTimer(() => {
               setShowFinalCta(true);
-              // Gatilho para transição automática no modo after-decline (Ato 2.1)
-              if (mode === 'after-decline') {
-                addTimer(() => onDecision('login'), 3500);
-              }
             }, 1000);
           }
         }, 1200);
@@ -265,160 +236,126 @@ const Act2WhatsApp: React.FC<Act2WhatsAppProps> = ({ onDecision, mode = 'normal'
     });
   };
 
+  const handleAudioComplete = () => {
+    // Quando o áudio termina, garantimos que o usuário seja levado ao login secreto
+    // Damos um tempo extra de 5 segundos para que ele possa processar as informações visuais
+    addTimer(() => {
+      onDecision('login');
+    }, 5000);
+  };
+
   const isUserTurn = showOptions || (step === 14 && !isTyping && mode !== 'after-decline') || showFinalCta;
   const isAnyOptionOpen = showOptions || (step === 14 && !isTyping && mode !== 'after-decline') || showFinalCta;
 
   return (
-    <div className="flex flex-col h-screen w-full bg-[#E5DDD5] font-sans overflow-hidden text-[#111b21]">
-      <style>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
-      <div className="sticky top-0 bg-[#008069] text-white p-3 flex items-center justify-between shadow-md z-[100] h-16 shrink-0">
-        <div className="flex items-center space-x-2">
-          <ArrowLeft className="w-5 h-5 cursor-pointer" />
-          <img src="https://i.postimg.cc/1XhTqCyf/joaquim-perfil-2.png" className="w-10 h-10 rounded-full object-cover border border-white/10" alt="J" />
+    <div className="flex flex-col h-screen w-full bg-[#E5DDD5] font-sans overflow-hidden text-[#111b21] relative">
+      <style>{`.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
+      
+      <div className="sticky top-0 bg-[#008069] text-white p-3 md:p-5 flex items-center justify-between shadow-md z-[100] h-14 md:h-20 shrink-0 landscape:h-12">
+        <div className="flex items-center space-x-3">
+          <ArrowLeft className="w-5 h-5 md:w-7 md:h-7 cursor-pointer" />
+          <img src="https://i.postimg.cc/1XhTqCyf/joaquim-perfil-2.png" className="w-9 h-9 md:w-12 md:h-12 rounded-full object-cover" alt="J" />
           <div>
-            <h1 className="font-bold text-sm">Joaquim da Recepção</h1>
-            <p className="text-[10px] opacity-80">{isOnline ? 'online' : 'conectando...'}</p>
+            <h1 className="font-bold text-sm md:text-lg">Joaquim</h1>
+            <p className="text-xs md:text-sm opacity-80">{isOnline ? 'online' : 'conectando...'}</p>
           </div>
         </div>
-        <div className="flex items-center space-x-4">
-          <Video className="w-5 h-5 cursor-pointer" onClick={() => onDecision('call')} />
-          <Phone className="w-4 h-4 cursor-pointer" onClick={() => onDecision('call')} />
-          <MoreVertical className="w-5 h-5" />
+        <div className="flex items-center space-x-5">
+          <Video className="w-5 h-5 md:w-7 md:h-7 cursor-pointer" onClick={() => onDecision('call')} />
+          <Phone className="w-4 h-4 md:w-6 md:h-6 cursor-pointer" onClick={() => onDecision('call')} />
+          <MoreVertical className="w-5 h-5 md:w-7 md:h-7" />
         </div>
       </div>
       
-      {/* Container de Mensagens com scroll automático */}
-      <div 
-        ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto p-4 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-repeat bg-[length:450px_auto] no-scrollbar relative"
-      >
-        <div className="space-y-3 pb-8">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 md:p-6 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-repeat bg-[length:450px_auto] no-scrollbar relative">
+        <div className="space-y-4 md:space-y-6 pb-6">
           {messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               {msg.isAudio ? (
-                <AudioBubble 
-                  onPlayStarted={startAudioSequence} 
-                  onComplete={() => {}} 
-                  onVolumeChange={onVolumeChange}
-                />
+                <AudioBubble onPlayStarted={startAudioSequence} onComplete={handleAudioComplete} onVolumeChange={onVolumeChange} />
               ) : (
-                <div className={`max-w-[85%] px-4 py-2 shadow-sm relative text-[14px] leading-tight ${msg.sender === 'user' ? 'bg-[#d9fdd3] rounded-l-lg rounded-br-lg' : 'bg-white rounded-r-lg rounded-bl-lg'}`}>
+                <div className={`max-w-[85%] px-4 py-2.5 md:px-6 md:py-4 shadow-sm relative text-base md:text-xl leading-relaxed ${msg.sender === 'user' ? 'bg-[#d9fdd3] rounded-l-2xl rounded-br-2xl' : 'bg-white rounded-r-2xl rounded-bl-2xl'}`}>
                   <p className="pr-12 text-[#111b21]">{msg.text}</p>
-                  <div className="absolute bottom-1 right-2 flex items-center space-x-1 text-[9px] text-[#667781]">
+                  <div className="absolute bottom-1 right-2 flex items-center space-x-1 text-[10px] md:text-xs text-[#667781] font-medium">
                     <span>{msg.timestamp}</span>
-                    {msg.sender === 'user' && <CheckCheck className="w-3.5 h-3.5 text-[#53bdeb]" />}
+                    {msg.sender === 'user' && <CheckCheck className="w-4 h-4 md:w-5 md:h-5 text-[#53bdeb]" />}
                   </div>
                 </div>
               )}
             </div>
           ))}
-          {isTyping && <div className="bg-white px-4 py-2 rounded-xl text-xs italic text-[#667781] w-fit animate-pulse shadow-sm border border-black/5">digitando...</div>}
+          {isTyping && <div className="bg-white px-4 py-2 rounded-2xl text-xs md:text-sm italic text-[#667781] w-fit animate-pulse shadow-sm font-medium border border-gray-100">digitando...</div>}
           
           {showFinalCta && (
-            <div className="flex justify-start animate-in zoom-in slide-in-from-left-4 duration-500 py-2">
-              <div className="bg-white rounded-lg shadow-sm overflow-hidden min-w-[240px] max-w-[85%] border border-black/5">
-                <div className="px-4 py-3 text-[14px] text-[#111b21]">Acesse o sistema aqui:</div>
+            <div className="flex justify-start py-4">
+              <div className="bg-white rounded-2xl shadow-[0_2px_5px_rgba(0,0,0,0.1)] overflow-hidden min-w-[260px] max-w-[85%] border border-black/[0.03]">
+                <div className="px-5 py-4 text-sm md:text-lg font-bold text-[#111b21] bg-white">Acesse o sistema:</div>
+                <div className="px-5 pb-4 space-y-1">
+                  <p className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold">Credenciais de Acesso:</p>
+                  <p className="text-xs md:text-sm font-mono bg-zinc-50 p-2 rounded border border-zinc-100">Login: SUPERADMIN<br/>Senha: meurefugio</p>
+                </div>
                 <button 
-                  onClick={() => onDecision('login')}
-                  className="w-full border-t border-gray-100 py-4 px-4 text-[#00a884] font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-gray-50 active:bg-gray-100 transition-colors uppercase tracking-tight"
+                  onClick={() => onDecision('login')} 
+                  className="w-full border-t border-gray-100 py-4 px-5 text-[#00a884] font-black text-sm md:text-lg flex items-center justify-center gap-3 uppercase tracking-wider bg-white hover:bg-gray-50 transition-colors"
                 >
-                  <ExternalLink className="w-4 h-4" />
-                  ACESSAR SUPER DEEP DARK WEB
+                  <ExternalLink className="w-5 h-5" /> ACESSAR SUPER DEEP DARK WEB
                 </button>
               </div>
             </div>
           )}
-          
-          {/* Marcador de fim de mensagens com espaçador para evitar sobreposição visual no início do scroll */}
           <div ref={messagesEndRef} className="h-4" />
         </div>
       </div>
 
-      {/* Sugestões de Resposta / Ação Sugerida */}
-      <div className={`transition-all duration-500 ease-in-out overflow-hidden shrink-0 ${isAnyOptionOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
-        <div className="px-4 pb-4 pt-2">
+      <div className={`transition-all duration-300 overflow-hidden shrink-0 ${isAnyOptionOpen ? 'max-h-[350px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className="px-4 pb-4 pt-2 landscape:pb-2">
           {showOptions && (
-            <div className="bg-white/95 backdrop-blur p-5 rounded-3xl shadow-xl space-y-3 border border-[#00a884]/20 animate-in slide-in-from-bottom-4 duration-500">
-              <p className="text-[10px] text-[#667781] font-bold uppercase tracking-widest text-center mb-1">Sugestões de Resposta</p>
-              <div className="space-y-2">
-                <button onClick={() => handleUserResponse("Tá tudo jóia, uai! 🙃 E com você?")} className="w-full bg-[#00a884] text-white py-4 rounded-2xl font-black uppercase tracking-tight flex justify-between items-center px-6 shadow-lg hover:brightness-110 active:scale-[0.98] transition-all">
-                  <span className="text-left">TÁ TUDO JÓIA, UAI!</span>
-                  <Smile className="w-5 h-5" />
-                </button>
-                <button onClick={() => handleUserResponse("Ah, mais ou menos, tô num cansaço danado!")} className="w-full bg-white border border-[#8696a0]/30 text-[#54656f] py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-gray-50 active:scale-[0.98] transition-all">
-                  <span className="text-left">AH, MAIS OU MENOS...</span>
-                  <Frown className="w-4 h-4" />
-                </button>
-                <button onClick={() => handleUserResponse("Tô no meu limite, não aguento mais...")} className="w-full bg-white border border-[#8696a0]/30 text-[#54656f] py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-gray-50 active:scale-[0.98] transition-all">
-                  <span className="text-left">TÔ NO MEU LIMITE</span>
-                  <AlertTriangle className="w-4 h-4" />
-                </button>
-                <button onClick={() => handleUserResponse("Pior que tá não fica...")} className="w-full bg-red-50 border border-red-200 text-red-600 py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-red-100 active:scale-[0.98] transition-all">
-                  <span className="text-left">PIOR QUE TÁ NÃO FICA</span>
-                  <Skull className="w-4 h-4" />
-                </button>
-              </div>
+            <div className="bg-white/95 backdrop-blur-xl p-4 md:p-6 rounded-[2.5rem] shadow-2xl space-y-3 landscape:grid landscape:grid-cols-2 landscape:gap-3 landscape:space-y-0">
+              <button onClick={() => handleUserResponse("Tá tudo jóia, uai! 🙃")} className="w-full bg-[#00a884] text-white py-4 md:py-6 rounded-2xl font-black uppercase text-xs md:text-lg flex justify-between items-center px-6 hover:scale-[1.02] transition-transform">
+                <span>TÁ TUDO JÓIA!</span> <Smile className="w-6 h-6" />
+              </button>
+              <button onClick={() => handleUserResponse("Nada é tão ruim que não possa piorar.")} className="w-full bg-red-50 border-2 border-red-200 text-red-600 py-4 md:py-6 rounded-2xl font-black uppercase text-xs md:text-base flex justify-between items-center px-6">
+                <span>PIOR QUE TÁ NÃO FICA</span> <Skull className="w-6 h-6" />
+              </button>
+              <button onClick={() => handleUserResponse("Tô no meu limite...")} className="w-full bg-white border-2 border-gray-200 text-gray-600 py-4 md:py-6 rounded-2xl font-black uppercase text-xs md:text-base flex justify-between items-center px-6 landscape:hidden">
+                <span>TÔ NO MEU LIMITE</span> <AlertTriangle className="w-6 h-6" />
+              </button>
             </div>
           )}
           {step === 14 && !isTyping && mode !== 'after-decline' && (
-            <div className="bg-white/95 backdrop-blur p-5 rounded-3xl shadow-xl space-y-3 border border-[#00a884]/20 animate-in slide-in-from-bottom-4 duration-500">
-              <p className="text-[10px] text-[#667781] font-bold uppercase tracking-widest text-center mb-1 italic">Ação Sugerida</p>
-              <div className="space-y-2">
-                <button onClick={() => onDecision('call')} className="w-full bg-[#00a884] text-white py-4 rounded-2xl font-black uppercase tracking-tight flex justify-between items-center px-6 shadow-lg hover:brightness-110 active:scale-[0.98] transition-all">
-                  <span className="text-left">PODE LIGAR, UAI!</span>
-                  <Phone className="w-5 h-5 fill-current" />
-                </button>
-                <button onClick={() => { addMessage("Me liga mais tarde", 'user'); setStep(100); }} className="w-full bg-white border border-[#8696a0]/30 text-[#54656f] py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-gray-50 active:scale-[0.98] transition-all">
-                  <span className="text-left">ME LIGA MAIS TARDE</span>
-                  <Clock className="w-4 h-4" />
-                </button>
-                <button onClick={() => onDecision('exit')} className="w-full bg-red-50 border border-red-200 text-red-600 py-3.5 rounded-2xl font-bold uppercase text-[12px] tracking-widest flex justify-between items-center px-6 hover:bg-red-100 active:scale-[0.98] transition-all">
-                  <span className="text-left">BLOQUEAR CONTATO</span>
-                  <XCircle className="w-4 h-4" />
-                </button>
-              </div>
+            <div className="bg-white/95 backdrop-blur-xl p-4 rounded-[2.5rem] shadow-2xl space-y-3 landscape:flex landscape:space-y-0 landscape:gap-3">
+              <button onClick={() => onDecision('call')} className="w-full bg-[#00a884] text-white py-5 md:py-7 rounded-2xl font-black uppercase text-sm md:text-xl flex justify-between items-center px-8 shadow-lg hover:bg-[#009079]">
+                <span>PODE LIGAR!</span> <Phone className="w-6 h-6 fill-current" />
+              </button>
+              <button onClick={() => { addMessage("Me liga mais tarde", 'user'); setStep(100); }} className="w-full bg-white border-2 border-gray-200 text-gray-500 py-4 md:py-6 rounded-2xl font-black uppercase text-xs md:text-base flex justify-between items-center px-6">
+                <span>ME LIGA MAIS TARDE</span> <Clock className="w-6 h-6" />
+              </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Barra de Input fixa no rodapé */}
-      <div className="bg-[#F0F2F5] p-2 pb-4 flex items-end space-x-2 relative z-50 shrink-0">
-        <div className={`flex-1 bg-white rounded-[26px] flex items-center px-3 min-h-[48px] shadow-sm transition-opacity ${!isUserTurn ? 'opacity-60 cursor-not-allowed' : ''}`}>
-          <button onClick={() => isUserTurn && setShowEmoji(!showEmoji)} className={`focus:outline-none ${!isUserTurn ? 'cursor-not-allowed' : ''}`}>
-            <Smile className={`w-6 h-6 ${showEmoji ? 'text-[#00a884]' : 'text-[#54656f]'}`} />
-          </button>
+      <div className="bg-[#F0F2F5] p-2 md:p-4 flex items-end space-x-3 relative z-50 shrink-0 landscape:py-2">
+        <div className={`flex-1 bg-white rounded-[2rem] flex items-center px-5 min-h-[48px] md:min-h-[64px] shadow-sm border border-gray-200/50 ${!isUserTurn ? 'opacity-60' : ''}`}>
+          <Smile className={`w-6 h-6 md:w-8 md:h-8 ${showEmoji ? 'text-[#00a884]' : 'text-[#54656f]'}`} />
           <input 
             type="text" 
             value={inputValue} 
             onChange={e => setInputValue(e.target.value)} 
             onKeyDown={e => e.key === 'Enter' && handleManualSend()} 
             disabled={!isUserTurn}
-            placeholder={isUserTurn ? "Digite sua mensagem" : "Aguarde o Joaquim..."} 
-            className="flex-1 px-3 py-2 text-sm outline-none bg-transparent text-[#111b21] disabled:placeholder-[#8696a0]" 
+            placeholder={isUserTurn ? "Digite..." : "..."} 
+            className="flex-1 px-3 py-2 text-base md:text-xl outline-none bg-transparent placeholder:font-bold" 
           />
-          <Paperclip className="w-5 h-5 text-[#54656f] -rotate-45" />
-          <Camera className="w-5 h-5 text-[#54656f]" />
+          <Camera className="w-6 h-6 text-[#54656f] landscape:hidden" />
         </div>
         <button 
           onClick={inputValue.trim() && isUserTurn ? handleManualSend : undefined} 
-          disabled={!isUserTurn && !inputValue.trim()}
-          className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all ${!isUserTurn && !inputValue.trim() ? 'bg-gray-300' : 'bg-[#00a884]'}`}
+          className={`w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-lg transition-all ${!isUserTurn && !inputValue.trim() ? 'bg-gray-300' : 'bg-[#00a884] active:scale-90'}`}
         >
-          {inputValue.trim() ? <Send className="w-5 h-5 text-white" /> : <Mic className="w-5 h-5 text-white" />}
+          {inputValue.trim() ? <Send className="w-5 h-5 md:w-7 md:h-7 text-white" /> : <Mic className="w-5 h-5 md:w-7 md:h-7 text-white" />}
         </button>
       </div>
-      
-      {showEmoji && isUserTurn && (
-        <div className="bg-white p-4 grid grid-cols-6 gap-2 border-t animate-in slide-in-from-bottom-2 shrink-0">
-          {['🙂', '🙃', '😅', '🤔', '😴', '😱'].map(emoji => (
-            <button key={emoji} onClick={() => { setInputValue(prev => prev + emoji); setShowEmoji(false); }} className="text-2xl hover:bg-gray-100 p-2 rounded">{emoji}</button>
-          ))}
-        </div>
-      )}
     </div>
   );
 };
