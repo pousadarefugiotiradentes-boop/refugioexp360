@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FunnelStep, UserProfile } from './types';
 import DevIndex from './components/DevIndex';
@@ -16,8 +17,8 @@ import { HERO_IMAGE_URL, LOGO_URL } from './constants';
 import { Shield, Power, Volume2, VolumeX, LayoutGrid, Activity, Info, HeartPulse, Play } from 'lucide-react';
 
 const App: React.FC = () => {
-  // Alterado para INDEX para iniciar no modo desenvolvedor
-  const [step, setStep] = useState<FunnelStep>(FunnelStep.INDEX);
+  // Iniciando diretamente no START_SCREEN para produção
+  const [step, setStep] = useState<FunnelStep>(FunnelStep.START_SCREEN);
   const [blueScreenMode, setBlueScreenMode] = useState<'intro' | 'final'>('intro');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -26,7 +27,8 @@ const App: React.FC = () => {
     name: 'Visitante'
   });
 
-  const [showDevTools, setShowDevTools] = useState(true);
+  // Desativado por padrão para esconder ferramentas de dev
+  const [showDevTools, setShowDevTools] = useState(false);
 
   const mainAudioRef = useRef<HTMLAudioElement | null>(null);
   const fadeIntervalRef = useRef<any>(null);
@@ -130,7 +132,7 @@ const App: React.FC = () => {
         </button>
       )}
 
-      {/* TELA DEV INDEX */}
+      {/* TELA DEV INDEX (Oculta por padrão) */}
       {step === FunnelStep.INDEX && (
         <DevIndex 
           onSelectStep={(s, mode) => {
